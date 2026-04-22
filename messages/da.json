@@ -1,0 +1,48 @@
+{
+  "header": {
+    "home": "Forside",
+    "services": "Ydelser",
+    "cases": "Cases",
+    "about": "Om os",
+    "contact": "Kontakt",
+    "cta": "Kontakt os"
+  },
+  "footer": {
+    "description": "Virksomhedsbeskrivelse her.",
+    "services": "Ydelser",
+    "company": "Virksomhed",
+    "about": "Om os",
+    "cases": "Cases",
+    "contact": "Kontakt",
+    "privacy": "Privatlivspolitik",
+    "cookies": "Cookiepolitik",
+    "copyright": "Alle rettigheder forbeholdes."
+  },
+  "cookies": {
+    "title": "Cookieindstillinger",
+    "description": "Vi bruger cookies for at forbedre din oplevelse. Du kan tilpasse dine præferencer nedenfor.",
+    "necessary": "Nødvendige",
+    "necessaryDesc": "Nødvendige for at hjemmesiden fungerer. Kan ikke deaktiveres.",
+    "analytics": "Analyse",
+    "analyticsDesc": "Hjælper os med at forstå, hvordan besøgende bruger hjemmesiden.",
+    "marketing": "Marketing",
+    "marketingDesc": "Bruges til at vise relevante annoncer.",
+    "acceptAll": "Acceptér alle",
+    "rejectOptional": "Kun nødvendige",
+    "savePreferences": "Gem præferencer",
+    "customize": "Tilpas"
+  },
+  "home": {
+    "title": "Velkommen"
+  },
+  "notFound": {
+    "title": "Siden blev ikke fundet",
+    "description": "Den side, du leder efter, findes ikke eller er blevet flyttet.",
+    "backHome": "Tilbage til forsiden"
+  },
+  "error": {
+    "title": "Noget gik galt",
+    "description": "Der opstod en uventet fejl. Prøv venligst igen.",
+    "tryAgain": "Prøv igen"
+  }
+}
