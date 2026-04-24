@@ -371,7 +371,7 @@ export default async function KontaktPage({
                     marginBottom: "var(--space-5)",
                   }}
                 >
-                  Online booking
+                  {t("booking.onlineLabel")}
                 </p>
                 <p
                   style={{
@@ -384,8 +384,7 @@ export default async function KontaktPage({
                     maxWidth: "340px",
                   }}
                 >
-                  Book din tid direkte i vores bookingsystem — vælg frisør,
-                  ydelse og tidspunkt.
+                  {t("booking.onlineDesc")}
                 </p>
                 <a
                   href="https://saxenhjoerring.bestilling.nu"
@@ -408,6 +407,9 @@ export default async function KontaktPage({
                   className="cta-primary"
                 >
                   {t("booking.primary")}
+                  <span style={{position:'absolute',width:'1px',height:'1px',padding:0,margin:'-1px',overflow:'hidden',clip:'rect(0,0,0,0)',whiteSpace:'nowrap',border:0}}>
+                    (åbner i nyt vindue)
+                  </span>
                 </a>
               </div>
 
@@ -510,7 +512,7 @@ export default async function KontaktPage({
                   letterSpacing: "-0.02em",
                 }}
               >
-                Åbningstider
+                {t("hours.heading")}
               </h2>
             </div>
 
@@ -597,7 +599,7 @@ export default async function KontaktPage({
               marginBottom: "var(--space-4)",
             }}
           >
-            Find os
+            {t("map.eyebrow")}
           </p>
           <h2
             id="map-heading"
@@ -637,6 +639,7 @@ export default async function KontaktPage({
             >
               <iframe
                 title="Saxen Frisør på Jernbanegade 1, Hjørring"
+                aria-label="Saxen Frisør på Jernbanegade 1, Hjørring"
                 src="https://maps.google.com/maps?q=Jernbanegade+1,+9800+Hjørring,+Denmark&hl=da&z=16&output=embed"
                 style={{
                   position: "absolute",
@@ -673,7 +676,7 @@ export default async function KontaktPage({
                     marginBottom: "var(--space-3)",
                   }}
                 >
-                  Adresse
+                  {t("map.addressLabel")}
                 </p>
                 <address style={{ fontStyle: "normal" }}>
                   <p
@@ -716,6 +719,9 @@ export default async function KontaktPage({
                 className="map-link"
               >
                 {t("booking.mapLink")}
+                <span style={{position:'absolute',width:'1px',height:'1px',padding:0,margin:'-1px',overflow:'hidden',clip:'rect(0,0,0,0)',whiteSpace:'nowrap',border:0}}>
+                  (åbner i nyt vindue)
+                </span>
               </a>
             </div>
           </div>
@@ -780,7 +786,7 @@ export default async function KontaktPage({
                   marginBottom: "var(--space-5)",
                 }}
               >
-                Book tid
+                {t("booking.ctaEyebrow")}
               </p>
               <h2
                 id="booking-cta-heading"
@@ -794,7 +800,7 @@ export default async function KontaktPage({
                   maxWidth: "560px",
                 }}
               >
-                Klar til besøg?
+                {t("booking.ctaHeading")}
               </h2>
             </div>
 
@@ -816,8 +822,7 @@ export default async function KontaktPage({
                   maxWidth: "380px",
                 }}
               >
-                Book online, ring til os, eller kig forbi salonen på
-                Jernbanegade 1.
+                {t("booking.ctaBody")}
               </p>
 
               <div
@@ -850,6 +855,9 @@ export default async function KontaktPage({
                   className="booking-cta-primary"
                 >
                   {t("booking.primary")}
+                  <span style={{position:'absolute',width:'1px',height:'1px',padding:0,margin:'-1px',overflow:'hidden',clip:'rect(0,0,0,0)',whiteSpace:'nowrap',border:0}}>
+                    (åbner i nyt vindue)
+                  </span>
                 </a>
 
                 {/* Secondary — phone */}

@@ -135,6 +135,7 @@
     },
     "hours": {
       "label": "Åbningstider",
+      "heading": "Åbningstider",
       "weekdays": "Man–Fre 09:00–17:30",
       "saturday": "Lørdag 08:00–13:00",
       "sunday": "Søndag Lukket"
@@ -144,7 +145,16 @@
     },
     "booking": {
       "primary": "Book tid online",
-      "mapLink": "Se på Google Maps"
+      "mapLink": "Se på Google Maps",
+      "onlineLabel": "Online booking",
+      "onlineDesc": "Book din tid direkte i vores bookingsystem — vælg frisør, ydelse og tidspunkt.",
+      "ctaEyebrow": "Book tid",
+      "ctaHeading": "Klar til besøg?",
+      "ctaBody": "Book online, ring til os, eller kig forbi salonen på Jernbanegade 1."
+    },
+    "map": {
+      "eyebrow": "Find os",
+      "addressLabel": "Adresse"
     }
   },
   "team": {
@@ -173,7 +183,13 @@
     },
     "eyebrow": "Om os",
     "headline": "Saxen — din frisør i Hjørring",
-    "lead": "Hos Saxen er vi seks frisører med mange års erfaring. Vi er på Jernbanegade 1 i Hjørring, og vi kender de fleste af vores kunder ved navn."
+    "lead": "Hos Saxen er vi seks frisører med mange års erfaring. Vi er på Jernbanegade 1 i Hjørring, og vi kender de fleste af vores kunder ved navn.",
+    "cta": {
+      "eyebrow": "Find os",
+      "heading": "Kom og besøg os",
+      "bookOnline": "Book tid online",
+      "seePrices": "Se vores priser"
+    }
   },
   "cookiePolitik": {
     "meta": {

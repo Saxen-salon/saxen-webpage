@@ -154,14 +154,6 @@ export function Header() {
                   transition: "color 150ms ease-out",
                   whiteSpace: "nowrap",
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color =
-                    "var(--color-accent-500)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color =
-                    "var(--color-foreground)";
-                }}
               >
                 {link.label}
               </Link>
@@ -170,6 +162,7 @@ export function Header() {
             {/* Phone — visible desktop */}
             <a
               href={`tel:+4598920099`}
+              className="saxen-phone-link"
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-sm)",
@@ -179,14 +172,6 @@ export function Header() {
                 letterSpacing: "0.02em",
                 transition: "color 150ms ease-out",
                 whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color =
-                  "var(--color-foreground)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color =
-                  "var(--color-muted)";
               }}
             >
               {t("phone")}
@@ -251,6 +236,7 @@ export function Header() {
               ref={hamburgerRef}
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
               aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
               style={{
                 background: "none",
@@ -322,6 +308,7 @@ export function Header() {
 
       {/* Mobile drawer */}
       <div
+        id="mobile-nav"
         ref={drawerRef}
         role="dialog"
         aria-modal="true"
@@ -377,7 +364,7 @@ export function Header() {
               alignItems: "center",
             }}
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
@@ -471,6 +458,8 @@ export function Header() {
             display: none;
           }
         }
+        .saxen-desktop-nav a:hover { color: var(--color-accent-500) !important; }
+        .saxen-phone-link:hover { color: var(--color-foreground) !important; }
       `}</style>
     </>
   );

@@ -334,6 +334,7 @@ export default async function YdelserPage({
               </p>
               <a
                 href="tel:+4598920099"
+                aria-label="Ring til os: 98 92 00 99"
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-base)",
@@ -612,6 +613,7 @@ export default async function YdelserPage({
 
           <a
             href="tel:+4598920099"
+            aria-label="Ring til os: 98 92 00 99"
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "var(--text-sm)",
@@ -750,6 +752,9 @@ export default async function YdelserPage({
                   className="booking-cta-primary"
                 >
                   {t("booking.ctaPrimary")}
+                  <span style={{position:'absolute',width:'1px',height:'1px',padding:0,margin:'-1px',overflow:'hidden',clip:'rect(0,0,0,0)',whiteSpace:'nowrap',border:0}}>
+                    (åbner i nyt vindue)
+                  </span>
                 </a>
 
                 {/* Secondary — internal contact page */}
@@ -779,6 +784,7 @@ export default async function YdelserPage({
               {/* Phone as tertiary option */}
               <a
                 href="tel:+4598920099"
+                aria-label="Ring til os: 98 92 00 99"
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",

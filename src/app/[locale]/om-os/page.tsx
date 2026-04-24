@@ -364,7 +364,7 @@ export default async function OmOsPage({
           }}
         >
           {/* Section header */}
-          <p
+          <h2
             id="values-heading"
             style={{
               fontFamily: "var(--font-body)",
@@ -377,7 +377,7 @@ export default async function OmOsPage({
             }}
           >
             Sådan driver vi salon
-          </p>
+          </h2>
 
           {/* Values — stacked editorial rows, not cards */}
           <div
@@ -529,23 +529,40 @@ export default async function OmOsPage({
             {/* Certifications placeholder row */}
             <div
               style={{
+                display: "grid",
+                gridTemplateColumns: "1fr",
+                gap: "var(--space-2)",
                 padding: "var(--space-6) 0",
                 borderBottom: "1px solid var(--color-border-subtle)",
               }}
+              className="fact-row"
             >
               <dt
                 style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "clamp(var(--text-xl), 2vw, var(--text-2xl))",
+                  fontWeight: 400,
+                  color: "var(--color-foreground)",
+                  letterSpacing: "-0.01em",
+                  lineHeight: "var(--leading-tight)",
+                }}
+              >
+                Certificeringer
+              </dt>
+              <dd
+                style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-sm)",
+                  fontSize: "var(--text-base)",
                   fontWeight: 400,
                   color: "var(--color-muted)",
                   lineHeight: "var(--leading-normal)",
+                  margin: 0,
                   fontStyle: "italic",
                 }}
               >
                 [NEEDS: Faglig certificering eller brancheforening (f.eks.
                 Frisørernes Arbejdsgiverforening)?]
-              </dt>
+              </dd>
             </div>
           </dl>
         </div>
@@ -601,7 +618,7 @@ export default async function OmOsPage({
                   marginBottom: "var(--space-5)",
                 }}
               >
-                Find os
+                {t("cta.eyebrow")}
               </p>
 
               <h2
@@ -616,7 +633,7 @@ export default async function OmOsPage({
                   marginBottom: "var(--space-8)",
                 }}
               >
-                Kom og besøg os
+                {t("cta.heading")}
               </h2>
 
               {/* Address + hours */}
@@ -690,7 +707,7 @@ export default async function OmOsPage({
                 }}
                 className="cta-primary"
               >
-                Book tid online
+                {t("cta.bookOnline")}
               </Link>
 
               {/* Secondary — see prices */}
@@ -712,7 +729,7 @@ export default async function OmOsPage({
                 }}
                 className="cta-secondary"
               >
-                Se vores priser
+                {t("cta.seePrices")}
               </Link>
             </div>
           </div>
