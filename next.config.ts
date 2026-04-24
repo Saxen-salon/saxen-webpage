@@ -34,7 +34,7 @@ const securityHeaders = [
       "img-src 'self' data: https:",
       "font-src 'self' data:",
       "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
-      "frame-src https://www.openstreetmap.org",
+      "frame-src https://maps.google.com https://www.google.com",
       "frame-ancestors 'none'",
     ].join('; '),
   },

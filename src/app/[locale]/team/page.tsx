@@ -47,14 +47,10 @@ type StaffMember = {
   imageSrc: string;
 };
 
-// Row 1: two featured portraits (55fr / 45fr asymmetric widths)
-const featuredMembers: StaffMember[] = [
+// All six members — Susanne first, equal presentation
+const allMembers: StaffMember[] = [
   { key: "susanne", imageSrc: "/images/team/susanne.jpg" },
   { key: "anita", imageSrc: "/images/team/anita.jpg" },
-];
-
-// Row 2: four supporting portraits (equal 4-column strip)
-const supportingMembers: StaffMember[] = [
   { key: "heidi", imageSrc: "/images/team/heidi.jpg" },
   { key: "tina", imageSrc: "/images/team/tina.jpg" },
   { key: "merete", imageSrc: "/images/team/merete.jpg" },
@@ -178,13 +174,6 @@ export default async function TeamPage({
       </section>
 
       {/* ── 2. PORTRAIT GRID ─────────────────────────────────────────────────── */}
-      {/*
-        P2 Environmental Portrait: asymmetric layout — NOT equal six-column Bootstrap grid.
-        Row 1: 2 featured portraits at 55fr / 45fr (4:5 aspect), larger presentation.
-        Row 2: 4 supporting portraits at equal 4-column strip (3:4 aspect, still face-sized).
-        No card borders, no box shadows, 0px border-radius on images.
-        Names in Playfair Display directly beneath each portrait.
-      */}
       <section
         aria-label="Vores frisører"
         style={{
@@ -201,27 +190,25 @@ export default async function TeamPage({
             padding: "0 var(--container-padding)",
           }}
         >
-          {/* ─ Row 1: two featured portraits, 55 / 45 split ─ */}
+          {/* Equal 3-column grid — all six portraits the same size, Susanne first */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "55fr 45fr",
-              gap: "var(--space-6)",
-              marginBottom: "var(--space-6)",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "var(--space-8)",
             }}
-            className="team-row-featured"
+            className="team-grid"
           >
-            {featuredMembers.map((member) => {
+            {allMembers.map((member) => {
               const bio = t(`members.${member.key}.bio`);
               const alt = t(`members.${member.key}.alt`);
               const name = t(`members.${member.key}.name`);
               return (
                 <article key={member.key}>
-                  {/* Portrait — 4:5 aspect, face-dominant */}
                   <div
                     style={{
                       position: "relative",
-                      aspectRatio: "4/5",
+                      aspectRatio: "3/4",
                       overflow: "hidden",
                     }}
                   >
@@ -229,7 +216,7 @@ export default async function TeamPage({
                       src={member.imageSrc}
                       alt={alt}
                       fill
-                      sizes="(max-width: 599px) 100vw, (max-width: 1280px) 55vw, 704px"
+                      sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1280px) 33vw, 400px"
                       style={{
                         objectFit: "cover",
                         objectPosition: "center top",
@@ -238,7 +225,6 @@ export default async function TeamPage({
                     />
                   </div>
 
-                  {/* Name + bio */}
                   <div style={{ paddingTop: "var(--space-5)" }}>
                     <h2
                       style={{
@@ -253,82 +239,11 @@ export default async function TeamPage({
                       {name}
                     </h2>
 
-                    {/* Bio — render placeholder if content not yet supplied */}
                     <p
                       className={isPlaceholder(bio) ? "placeholder-content" : undefined}
                       style={{
                         fontFamily: "var(--font-body)",
                         fontSize: "var(--text-base)",
-                        fontWeight: 400,
-                        color: "var(--color-muted)",
-                        lineHeight: "var(--leading-relaxed)",
-                        maxWidth: "36ch",
-                      }}
-                    >
-                      {bio}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          {/* ─ Row 2: four supporting portraits, equal strip ─ */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "var(--space-6)",
-            }}
-            className="team-row-supporting"
-          >
-            {supportingMembers.map((member) => {
-              const bio = t(`members.${member.key}.bio`);
-              const alt = t(`members.${member.key}.alt`);
-              const name = t(`members.${member.key}.name`);
-              return (
-                <article key={member.key}>
-                  {/* Portrait — 3:4 aspect, still face-sized (min 280px on mobile 2-col) */}
-                  <div
-                    style={{
-                      position: "relative",
-                      aspectRatio: "3/4",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Image
-                      src={member.imageSrc}
-                      alt={alt}
-                      fill
-                      sizes="(max-width: 599px) 50vw, (max-width: 1280px) 25vw, 296px"
-                      style={{
-                        objectFit: "cover",
-                        objectPosition: "center top",
-                        borderRadius: 0,
-                      }}
-                    />
-                  </div>
-
-                  {/* Name + bio */}
-                  <div style={{ paddingTop: "var(--space-4)" }}>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: "var(--text-xl)",
-                        fontWeight: 400,
-                        color: "var(--color-foreground)",
-                        letterSpacing: "-0.01em",
-                        marginBottom: "var(--space-2)",
-                      }}
-                    >
-                      {name}
-                    </h3>
-
-                    <p
-                      className={isPlaceholder(bio) ? "placeholder-content" : undefined}
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "var(--text-sm)",
                         fontWeight: 400,
                         color: "var(--color-muted)",
                         lineHeight: "var(--leading-relaxed)",
@@ -343,22 +258,12 @@ export default async function TeamPage({
           </div>
         </div>
 
-        {/* Responsive overrides */}
         <style>{`
-          /* Mobile: both rows stack to 1 column */
           @media (max-width: 599px) {
-            .team-row-featured {
-              grid-template-columns: 1fr !important;
-            }
-            .team-row-supporting {
-              grid-template-columns: repeat(2, 1fr) !important;
-            }
+            .team-grid { grid-template-columns: 1fr !important; }
           }
-          /* Tablet: featured row still 55/45, supporting drops to 2 */
           @media (min-width: 600px) and (max-width: 899px) {
-            .team-row-supporting {
-              grid-template-columns: repeat(2, 1fr) !important;
-            }
+            .team-grid { grid-template-columns: repeat(2, 1fr) !important; }
           }
         `}</style>
       </section>

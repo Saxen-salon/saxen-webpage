@@ -226,42 +226,6 @@ export default async function HomePage({
               >
                 6
               </span>
-              {/* Descriptive overlay text */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "var(--space-10)",
-                  left: "var(--space-10)",
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-xs)",
-                    fontWeight: 500,
-                    color: "var(--color-muted)",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    marginBottom: "var(--space-3)",
-                  }}
-                >
-                  Hjørring
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "var(--text-2xl)",
-                    fontWeight: 400,
-                    color: "var(--color-ink-700)",
-                    lineHeight: "var(--leading-snug)",
-                  }}
-                >
-                  Frisører
-                  <br />
-                  siden vi<br />
-                  åbnede.
-                </p>
-              </div>
               {/* Hairline vertical accent */}
               <div
                 style={{

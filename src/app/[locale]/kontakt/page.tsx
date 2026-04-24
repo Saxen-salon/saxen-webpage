@@ -624,7 +624,7 @@ export default async function KontaktPage({
             }}
             className="map-grid"
           >
-            {/* OpenStreetMap embed */}
+            {/* Google Maps embed */}
             <div
               style={{
                 position: "relative",
@@ -637,7 +637,7 @@ export default async function KontaktPage({
             >
               <iframe
                 title="Saxen Frisør på Jernbanegade 1, Hjørring"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=9.9679%2C57.4581%2C9.9779%2C57.4621&layer=mapnik&marker=57.4601%2C9.9729"
+                src="https://maps.google.com/maps?q=Jernbanegade+1,+9800+Hjørring,+Denmark&hl=da&z=16&output=embed"
                 style={{
                   position: "absolute",
                   top: 0,
