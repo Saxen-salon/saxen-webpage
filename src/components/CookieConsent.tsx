@@ -38,13 +38,14 @@ export function CookieConsent() {
   const [preferences, setPreferences] = useState<CookiePreferences>(
     () => getStoredPreferences() ?? defaultPreferences,
   );
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const acceptBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Move focus to dialog when it becomes visible
+  // Move focus to the primary button when banner appears (not the container div,
+  // which causes a double-tap bug on mobile where the first tap only shifts focus)
   useEffect(() => {
     if (visible) {
       const timer = setTimeout(() => {
-        dialogRef.current?.focus();
+        acceptBtnRef.current?.focus();
       }, 100);
       return () => clearTimeout(timer);
     }
@@ -73,11 +74,9 @@ export function CookieConsent() {
 
   return (
     <div
-      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={t("title")}
-      tabIndex={-1}
       style={{
         position: "fixed",
         bottom: 0,
@@ -159,6 +158,7 @@ export function CookieConsent() {
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--space-3)" }}>
           {/* Primary CTA — terracotta, flat, no radius */}
           <button
+            ref={acceptBtnRef}
             onClick={acceptAll}
             style={{
               fontFamily: "var(--font-body)",
