@@ -222,11 +222,10 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Mobile right: phone + hamburger */}
+          {/* Mobile right: phone + hamburger — shown/hidden by scoped CSS, not inline style */}
           <div
             className="saxen-mobile-controls"
             style={{
-              display: "flex",
               alignItems: "center",
               gap: "var(--space-4)",
             }}

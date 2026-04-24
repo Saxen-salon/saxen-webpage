@@ -396,3 +396,91 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** `:focus-visible { outline: 2px solid var(--color-accent-500); outline-offset: 3px; }` is present at line 171–174. `@media (prefers-reduced-motion: reduce)` at lines 177–186 collapses all transitions and animations via the universal selector. Both pass WCAG SC 2.4.7 (Focus Visible) and SC 2.3.3 (Animation from Interactions). `lang={locale}` is dynamic and correctly set in `layout.tsx:103` — passes SC 3.1.1 Language of Page.
 **Status:** handled
 
+---
+
+## browser-qa — 2026-04-24 — commit e9692d6
+
+### browser-qa — 2026-04-24 — home-da-desktop
+
+### 2026-04-24T14:00 — browser-qa — critical — blocking:yes
+**Where:** `/da` at desktop (2494px), `/da/kontakt`, all routes, commit=e9692d6
+**What:** Hamburger menu (`.saxen-mobile-controls`) always visible on desktop — media query override fails due to inline style specificity
+**Why:** `Header.tsx` applies `style={{ display: "flex" }}` inline on `.saxen-mobile-controls`. The scoped `<style>` block sets `@media (min-width: 768px) { .saxen-mobile-controls { display: none; } }` but inline styles have higher CSS specificity than class-based rules, so the media query never wins. At 2494px viewport the full desktop nav AND the hamburger icon are both visible simultaneously — directly violating the design specification. At 768px+ the mobile controls div should be hidden. The desktop nav (`.saxen-desktop-nav`) correctly shows because the inline style there is also `display: flex` matching the media query value — only the mobile hide is broken.
+**Suggested fix:** Remove `display: "flex"` from the inline `style` prop on `.saxen-mobile-controls` in `Header.tsx`. Let the scoped CSS handle all display values. Alternatively, apply visibility via a CSS class toggle instead of inline style: replace `style={{ display: "flex", ... }}` with `className="saxen-mobile-controls"` and move `align-items` and `gap` into the scoped `<style>` block.
+**Status:** pending
+
+---
+
+### browser-qa — 2026-04-24 — home-da-desktop
+
+### 2026-04-24T14:01 — browser-qa — warning — blocking:no
+**Where:** `/da` (header "Book tid" CTA) and all pages, commit=e9692d6
+**What:** Primary CTA button uses `accent-600` (#9A4C2C) not `accent-500` (#B8623A) as the design system specifies
+**Why:** `Header.tsx` line 202 sets `backgroundColor: "var(--color-accent-600)"` for the "Book tid" button. All other CTAs across the site also compute to `rgb(154, 76, 44)` = `#9A4C2C` (accent-600). The design system SKILL.md and globals.css specify `--color-accent-500` (#B8623A) as the primary CTA color and `--color-accent-600` as the pressed/focus state. Note: the accessibility audit (finding 00:12) specifically recommends using accent-600 for AA contrast — so this is likely an intentional accessibility fix. Flag as warning to confirm this is deliberate.
+**Suggested fix:** If the accent-600 choice was made to pass WCAG AA contrast (recommended in finding 00:12), update the design system token documentation to reflect that the primary CTA token is accent-600, not accent-500. If unintentional, revert to accent-500 and address contrast separately. Either way, the decision should be documented explicitly.
+**Status:** pending
+
+---
+
+### browser-qa — 2026-04-24 — home-da-desktop
+
+### 2026-04-24T14:02 — browser-qa — note — blocking:no
+**Where:** `/da` (homepage hero section), commit=e9692d6
+**What:** Hero section has no photograph — large whitespace gap above the fold where a salon or staff image would anchor the brand
+**Why:** The hero is text-only: location badge, large serif headline, subline, two CTAs. The right half of the viewport is empty cream. Per design-direction.md P2 Environmental Portrait, the hero composition should have a staff or salon photograph. This is an expected gap (IMAGE_CATALOG.md acknowledges it) but is confirmed visible in browser. No image gap indicator is shown — blank space may be mistaken for complete design.
+**Suggested fix:** Source a hero photograph per P2 strategy. Until available, consider a subtle hairline border or editorial accent element to indicate that an image is planned here rather than leaving empty space.
+**Status:** pending
+
+---
+
+### browser-qa — 2026-04-24 — home-da-desktop
+
+### 2026-04-24T14:03 — browser-qa — note — blocking:no
+**Where:** `/da` (homepage team section), commit=e9692d6
+**What:** Team section on homepage uses initial-letter placeholder boxes for all six staff — real photos exist in `/public/images/team/` but are not wired up
+**Why:** The six team members show decorative beige boxes with single initials (S, A, H, T, M, C) instead of portrait photos. Files `anita.jpg`, `camilla.jpg`, `heidi.jpg`, `merete.jpg`, `susanne.jpg`, `tina.jpg` confirmed present in `public/images/team/`. This reinforces existing finding architect-12:03 with browser confirmation. The team page (`/da/team`) was not in scope for this QA pass but the homepage teaser is visually incomplete.
+**Suggested fix:** Wire up `next/image` in `src/app/[locale]/page.tsx` team teaser using the existing images at `/images/team/{name}.jpg`. Noted as existing finding (architect 2026-04-24T12:03).
+**Status:** pending
+
+---
+
+### browser-qa — 2026-04-24 — kontakt-da-desktop
+
+### 2026-04-24T14:04 — browser-qa — note — blocking:no
+**Where:** `/da/kontakt` (map section), commit=e9692d6
+**What:** Contact page uses Google Maps embed (not OpenStreetMap) — prior customer finding 10:07 and architect finding 12:07 incorrectly identified this as OpenStreetMap
+**Why:** Live browser inspection confirms `maps.google.com` iframe at `iframe.src` hostname. The code uses a Google Maps embed URL. Prior review findings 2026-04-24T10:07 and 2026-04-24T12:07 identified OSM incorrectly — those findings should be updated to `handled`/`rejected` as the implementation already uses Google Maps. The `frame-src` CSP finding (12:07) may still need updating to permit `maps.google.com` rather than `openstreetmap.org`.
+**Suggested fix:** Update findings 10:07 and 12:07 to `rejected` (map is Google, not OSM). Update the CSP `frame-src` directive in `next.config.ts` to permit `https://maps.google.com` and `https://www.google.com` (Google Maps embeds load from multiple subdomains).
+**Status:** pending
+
+---
+
+### browser-qa — 2026-04-24 — home-da-desktop
+
+### 2026-04-24T14:05 — browser-qa — note — blocking:no
+**Where:** All routes, commit=e9692d6
+**What:** Cookie consent banner persists across all pages — not dismissed between navigation events
+**Why:** The cookie consent banner remains visible on every page during this QA session because it was not dismissed. This is correct first-visit behavior ✓. The banner shows "Acceptér alle", "Kun nødvendige", "Tilpas" controls. Design is consistent with the site's C3/S4 tokens — flat terracotta button, 0px radius, cream background. Analytics scripts confirmed absent before consent is given ✓.
+**Suggested fix:** No fix needed. Confirmed working as intended.
+**Status:** handled
+
+---
+
+## browser-qa — 2026-04-24 — Design Fidelity Summary
+
+**C3 Ink + Cream:** PASS — body background `#FAF7F2` ✓, header background `#FAF7F2` ✓, foreground `#0F0E0C` ✓, no cool-grey neutrals observed ✓, no pure black/white ✓
+**T5 Contrast Pair:** PASS — h1/h2/h3 render in Playfair Display ✓, body in Work Sans ✓, h1 at 88px (D2 max) ✓
+**S4 Architectural Line:** PASS — 0px border-radius on all buttons and cards ✓, no rounded corners detected anywhere ✓, hairline separators on price list ✓
+**D2 Editorial:** PASS — generous section spacing visible ✓, generous whitespace between sections ✓
+**M1 Architectural Stillness:** PASS — no parallax observed ✓, no gradient buttons ✓, no scroll animation cascades ✓
+**Avoid List violations:** NONE — no dark Bootstrap navbar ✓, no gradient buttons ✓, no equal Bootstrap card columns ✓, no rounded cards ✓, no static Google Maps PNG ✓, footer is Saxen-first not platform-first ✓
+**Identity Test:** PASSES — warm cream palette, serif headlines, price-list-as-document, terracotta CTAs, Hjørring in hero — clearly a neighbourhood salon, not SaaS or generic service business ✓
+
+## browser-qa — 2026-04-24 — Content Checks Summary
+
+**Homepage /da:** h1 "Vi kender dit hår." ✓, location badge "JERNBANEGADE 1, HJØRRING" ✓, "35+" price count ✓, booking link to bestilling.nu ✓, phone tel: links ✓, opening hours table ✓, color callout strip ✓, cookie consent ✓, no team section (staff names absent from homepage body content) ✓, no horizontal scroll ✓
+**Kontakt /da/kontakt:** h1 "Kom forbi" ✓, phone 98 92 00 99 as tel: link ✓, address Jernbanegade 1 9800 Hjørring ✓, all 7 opening days ✓, Google Maps embed ✓, booking CTA ✓
+**Ydelser /da/ydelser:** all 5 categories (Klipninger, Klip og Farve, Opsætninger, Bryn og Vipper, Herrer) ✓, Dameklip 445 kr ✓, Herreklip 355 kr ✓, Brudefrisure 960 kr ✓, color callout with phone ✓, no wall of undifferentiated text ✓
+**Om os /da/om-os:** 5 [NEEDS:] markers visible ✓, values section ✓, closing address section ✓
+**Cookie-politik /da/cookie-politik:** Danish legal content ✓, last updated date ✓, link to privatlivspolitik ✓, contact email present ✓
+
