@@ -124,7 +124,9 @@ Read `SITE_PLAN_TEMPLATE.md` to get the build phases. Check which pages already 
 
 Tell the user:
 > "Building pages now. You can optionally run review loops in separate terminals — they write findings to `.redesign-state/review-findings.md` which I drain between phases:
-> `/loop 15m /review-architect`, `/loop 15m /review-customer`, `/loop 15m /review-a11y`"
+> `/loop 15m /review-architect`, `/loop 15m /review-customer`, `/loop 15m /review-a11y`
+>
+> If you have `npm run dev` running on localhost:3000, I'll also run browser-qa at each phase boundary and in the final review — it's phase-gated, not `/loop`-based, because it attaches to completed work, not wall-clock ticks."
 
 Build pages phase by phase. For EACH page or component, launch the **web-designer agent** (Agent tool) with a prompt that passes the **full direction brief context** — not just brand attributes. The prompt must include:
 
@@ -148,11 +150,18 @@ Build pages phase by phase. For EACH page or component, launch the **web-designe
 - Any `FAIL` with a `JUSTIFIED` row that references a concrete brand constraint over-riding the brief → accept, and log the acceptance in `.redesign-state/decisions.md`.
 - Any unjustified `FAIL` → spawn the web-designer again with the specific quote: "Rework [page]: your compliance check failed on [strategy] with reason [quote]. Re-read `design-direction.md` section [X] and rebuild." Do not proceed to the next page until compliance passes.
 
-**After each phase:** Run `npm run build` to verify compilation. If it fails, fix it before continuing. Drain `.redesign-state/review-findings.md`:
+**After each phase:**
 
-- For each unhandled finding, decide: apply now (critical+blocking), defer (note in the finding's status line), or reject (log reasoning in decisions.md).
-- All `blocking: yes` findings must be handled before the next phase starts.
-- Any architect finding citing a `design-direction.md` violation is blocking, regardless of how the reviewer phrased it.
+1. Run `npm run build` to verify compilation. If it fails, fix it before continuing.
+
+2. **Phase-gated browser QA.** Check if a local dev server is up: `curl -sI http://localhost:3000 --max-time 5 | head -1`. If it returns `HTTP/... 200`, launch the **browser-qa agent** (Agent tool) with instructions: "Do a phase-boundary browser QA pass. Apply the readiness protocol per `.claude-plugin/agents/browser-qa.md`. Scope: full sampled route set at mobile 375 + desktop 1440, all configured locales for `/` and `/contact`. Verify rendered behavior, rendered fidelity to `design-direction.md`, and identify visual gaps (including hero sections with no image). Append findings to `.redesign-state/review-findings.md` with reviewer `browser-qa`; save screenshots to `.redesign-state/screenshots/` per the naming schema. Honor existing `gap-image` dispositions (don't re-raise `rejected` or `converted`)." If the dev server is NOT up, append one line to `.redesign-state/decisions.md`: "browser-qa skipped at <phase> boundary — dev server not running on localhost:3000" and continue. Do not stop to ask the user — they can run `/review-browser` manually later if they want that coverage.
+
+3. **Drain** `.redesign-state/review-findings.md`:
+   - For each unhandled finding (architect, customer-perspective, a11y, browser-qa), decide: apply now (critical+blocking), defer (note in the finding's status line), or reject (log reasoning in `.redesign-state/decisions.md`).
+   - All `blocking: yes` findings must be handled before the next phase starts.
+   - Any architect finding citing a `design-direction.md` violation is blocking, regardless of how the reviewer phrased it.
+   - Any browser-qa finding with severity `critical` and category `rendered-behavior` or `rendered-fidelity` is blocking; `gap-image` and `console-error`/`network-error` are not blocking by default but require explicit disposition (route `gap-image` findings to web-designer — the designer either adds an `IMG-...` row to `IMAGE_REQUESTS.md` and marks disposition `converted`, or marks `rejected` with reason).
+   - For mechanical fixes, apply inline. For judgment calls or multi-file changes, spawn the web-designer with the specific finding(s) and wait for compliance-log entry.
 
 Briefly tell the user what was built and proceed to the next phase without waiting.
 
@@ -168,7 +177,9 @@ Drain any remaining findings in `.redesign-state/review-findings.md` first, then
 
 3. Launch the **accessibility-auditor agent** (Agent tool): "Run a comprehensive WCAG 2.1 AA accessibility audit across all built pages. Check semantic HTML, contrast, keyboard navigation, ARIA, forms, focus management, motion preferences. Tag each finding as [AUTO-FIX] (mechanical, single-file) or [NEEDS DESIGNER]."
 
-Apply critical fixes the agents surface. Distinctiveness violations from the architect are Critical and blocking — spawn web-designer to rework. Apply `[AUTO-FIX]` findings from the a11y-auditor inline. Route `[NEEDS DESIGNER]` findings to web-designer.
+4. If `curl -sI http://localhost:3000 --max-time 5 | head -1` returns `HTTP/... 200`, launch the **browser-qa agent** (Agent tool): "Final browser QA pass across the full sampled route set. Mobile + desktop, all configured locales for `/` and `/contact`. Apply the readiness protocol per `.claude-plugin/agents/browser-qa.md`. Verify rendered behavior, rendered fidelity to `design-direction.md` (fonts actually loaded at display weights, accent color behaves as accent not field, committed P-strategy visible in the rendered output), and identify any remaining visual gaps. Append findings to `.redesign-state/review-findings.md`." If the dev server is not running, append one line to `.redesign-state/decisions.md`: "browser-qa skipped in final review — dev server not running on localhost:3000; recommend the user runs `/review-browser` manually before `/publish`." Include this gap in the status summary to the user.
+
+Apply critical fixes the agents surface. Distinctiveness violations from the architect are Critical and blocking — spawn web-designer to rework. Apply `[AUTO-FIX]` findings from the a11y-auditor inline. Route `[NEEDS DESIGNER]` findings to web-designer. Route browser-qa findings per the severity rules in the phase-drain section above — critical rendered-behavior/rendered-fidelity are blocking; `gap-image` findings go to web-designer for disposition.
 
 ---
 

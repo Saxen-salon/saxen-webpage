@@ -442,8 +442,11 @@ The orchestrator runs all review agents one final time on the completed site:
 1. Architect: full-site coherence review
 2. Customer-perspective: buyer evaluation of major pages (Homepage, Services, Contact)
 3. Accessibility auditor: comprehensive a11y pass
+4. Browser-qa: rendered behavior + rendered fidelity + visual-gap pass (only if `localhost:3000` is up; otherwise the orchestrator logs "browser-qa skipped — dev server not running" to `.redesign-state/decisions.md` and tells the user to run `/review-browser` manually before `/publish`).
 
 Apply critical fixes surfaced by reviewers.
+
+**Phase-boundary browser-qa** also runs earlier — the orchestrator invokes it after each build phase completes (same dev-server check), so rendered issues are caught while the designer's context is still loaded. Findings drain through the same `.redesign-state/review-findings.md` queue as every other reviewer.
 
 ---
 
