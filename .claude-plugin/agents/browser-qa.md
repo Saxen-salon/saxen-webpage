@@ -166,32 +166,34 @@ The standard is `design-direction.md`. Not your taste. Verification methods:
 
 - **Avoid list and "what we're moving away from."** If any rendered element matches an Avoid-list item or resembles the old-site-screenshot signatures the brief said it's moving away from, Warning or Critical per severity of the match.
 
-### 3. Visual gaps *(secondary)*
+- **Required image slots executed.** Read `IMAGE_SLOTS.md`. For every slot on the page being reviewed, verify the rendered output satisfies the slot — either a real image is visible, a `[NEEDS:image IMG-...]` placeholder is rendered with the `.placeholder-content` wrap (acceptable intermediate state), or the slot is marked `justified-none` in the inventory. A slot marked `pending` or `manifest-row` where the rendered page shows nothing at all (blank band where the slot should be) is a **Critical rendered-fidelity finding**. Cite the slot ID + the brief quote verbatim. Do not classify this as `gap-image` — brief-mandated slots are rendered-fidelity violations, not optional imagery gaps.
 
-Identify sections where imagery would strengthen a section and none exists. **Frame gaps as composition or proof gaps, not taste demands.**
+### 3. Visual gaps *(secondary — truly optional imagery only)*
 
-- **Legitimate gap examples:**
-  - Case study has no visual evidence of the work described.
-  - About page has no team imagery despite the brand skill listing named team members.
-  - Service page describes a capability with no visual anchor — long text block ends without proof.
-  - Hero section is text-only on a page type where the direction brief's P-strategy expects imagery.
+**Scope narrowed:** if the brief mandates imagery for a section, it's a slot in `IMAGE_SLOTS.md` and any missing-rendered-imagery is a rendered-fidelity finding (Dimension 2 above), NOT a gap-image finding. This dimension covers only sections that are NOT in the slot inventory — truly optional proof or composition imagery that would strengthen a section without being brief-mandated.
+
+- **Legitimate gap examples** (not in IMAGE_SLOTS.md):
+  - Case study text mentions before/after results but no supporting diagram or chart.
+  - A testimonial quote could be reinforced with a logo or branded pull-quote styling.
+  - Long text block on an optional content page that the brief leaves open-ended.
 - **NOT legitimate gap examples:**
-  - "Would look nicer with an image."
-  - "Section feels empty" without tying to a specific missing proof point.
+  - Any slot that already exists in `IMAGE_SLOTS.md` — use Dimension 2 instead, category `rendered-fidelity`.
+  - "Would look nicer with an image" without tying to a specific missing proof point.
   - Any section the direction brief explicitly committed to minimalism.
 
-Gap findings go to review-findings.md with category `gap-image` and a **proposed role** (hero / content / card / decorative). Severity is `note` by default, `warning` if it violates the committed P-strategy, Critical if the hero is visibly empty.
+Gap findings go to review-findings.md with category `gap-image`. Severity is always `note` (gap-image is, by definition, optional — if it rises above note it belongs in `rendered-fidelity` with a slot-inventory update).
 
 **Cross-check before flagging a gap:**
-- Does `IMAGE_CATALOG.md` have an existing image that would fit? If yes, the finding should recommend reuse: "catalog has `public/images/facility/workshop-bay-2.jpg`, which fits this service description."
+- Is this section actually covered by a slot in `IMAGE_SLOTS.md`? If yes, file as `rendered-fidelity`, not `gap-image`.
+- Does `IMAGE_CATALOG.md` have an existing image that would fit? If yes, recommend reuse in the finding.
 - Is there already an `IMG-<ID>` row in `IMAGE_REQUESTS.md` covering this slot? If yes, the finding is redundant — don't file it.
 
-**Stopping rule.** Each gap finding carries a `disposition` field:
+**Stopping rule.** Each gap finding carries a `Disposition` field:
 - `pending` — default state on first filing. Web-designer evaluates.
-- `rejected` — the web-designer decided the gap is intentional. Record the reason. You do NOT re-raise a `rejected` gap for the same route+section on subsequent runs unless the section's code has materially changed (different component, different content).
-- `converted` — the web-designer converted the gap into an `IMG-<ID>` manifest row. Don't re-file.
+- `rejected` — the web-designer decided the gap is intentional. Record the reason. Do NOT re-raise a `rejected` gap for the same route+section on subsequent runs unless the section's code has materially changed.
+- `converted` — the web-designer converted the gap into an `IMG-<ID>` manifest row AND added the slot to `IMAGE_SLOTS.md`. Don't re-file.
 
-The `disposition` lives in the finding's body; browser-qa reads findings on entry and skips any `gap-image` with disposition `rejected` for the same route+section.
+The `Disposition` lives in the finding's body; browser-qa reads findings on entry and skips any `gap-image` with disposition `rejected` for the same route+section.
 
 ---
 
@@ -215,28 +217,71 @@ Every finding in `review-findings.md` references its screenshot path(s). Screens
 
 ## Findings format
 
-Append to `.redesign-state/review-findings.md`. One block per finding. Schema:
+Append to `.redesign-state/review-findings.md`. One block per finding. **Every field below is non-optional in the structure; fields marked "conditional" only apply to the categories listed but ALL such fields MUST appear in the block (as `<n/a>` when not applicable).** Post-run self-check verifies this.
 
 ```markdown
 ### browser-qa — <YYYY-MM-DD HH:MM> — <route-slug>-<locale>-<viewport>
 
 - **Severity:** critical | warning | note
 - **Category:** dev-server-error | stuck-loading | rendered-behavior | rendered-fidelity | font-fallback-render | gap-image | console-error | network-error
-- **Blocking:** yes | no  *(yes for critical rendered-behavior or critical rendered-fidelity; no for gap-image, notes)*
+- **Blocking:** yes | no
+- **Brief area:** <e.g., P2 Environmental Portrait, T1 Technical Mono, or n/a> *(conditional: rendered-fidelity, font-fallback-render, and gap-image findings must fill — others n/a)*
+- **Slot ID:** <IMG-SLOT-... from IMAGE_SLOTS.md, or n/a> *(conditional: fill when the finding maps to a known slot)*
+- **Image action:** pending-manifest-row | reuse-catalog | intentionally-none | n/a *(conditional: rendered-fidelity + gap-image only; others n/a)*
 - **Where:** <route> at <viewport>, locale=<locale>, rendered with commit=<short-sha>, sw=<cleared|not-present>
 - **Screenshots:** `.redesign-state/screenshots/<filename>.png` *(one or more)*
 - **What:** <one-sentence description — must stand alone without the screenshot>
-- **Brief citation:** *(rendered-fidelity only — verbatim quote from design-direction.md being violated)*
+- **Brief citation:** <verbatim quote from design-direction.md, or n/a> *(conditional: required for rendered-fidelity; n/a for others)*
 - **Why it matters:** <one sentence>
 - **Suggested fix:** <one sentence>
-- **Disposition:** pending | rejected | converted  *(gap-image only)*
-- **Related findings:** `<id or slug of another finding>` *(when this duplicates an architect finding, reference it here)*
+- **Disposition:** pending | rejected | converted | n/a *(conditional: gap-image only; others n/a)*
+- **Related findings:** <id or slug of another finding, or none>
 - **Status:** pending
 ```
 
-When a gap-image finding is `rejected` or `converted`, update the Disposition in place — do NOT delete the entry. The entry is the audit trail that prevents re-filing.
+## Severity decision table (binding — replace any prose severity guidance you might infer)
 
-When you see that an architect finding in the same file covers the same slot at a higher abstraction (e.g., architect: "brief P2 committed, hero image missing"), set `Related findings:` to that finding's ID and mark yours as `duplicate-of` in the What field: "duplicate of architect finding ARCH-XX; providing rendered screenshot evidence." The web-designer acts on the architect finding; yours is context.
+The severity of a finding is **determined by Category + context**, not by taste. Apply this table; the self-check validates it.
+
+| Category | Condition | Severity | Blocking |
+|----------|-----------|----------|----------|
+| `dev-server-error` | Next.js error overlay visible at any route | critical | yes |
+| `stuck-loading` | Loading skeleton still visible after 10s | critical | yes |
+| `rendered-behavior` | Form does not submit, dead button/link, 4xx on CTA click, mobile nav non-functional, horizontal scroll at 375px, sticky header covering hero | critical | yes |
+| `rendered-behavior` | Text wrap collision that blocks readability, language switcher goes to wrong route | warning | no |
+| `rendered-fidelity` | Committed P-strategy not executed (brief-mandated slot visibly empty, committed display font rendering as fallback, accent used as field not accent); identity test fails at a glance | critical | yes |
+| `rendered-fidelity` | Committed P-strategy weakly executed (typographic contrast present but muted, accent usage borderline) | warning | no |
+| `font-fallback-render` | `document.fonts.check()` returns false for a committed display weight; `getComputedStyle` shows fallback family | critical | yes |
+| `gap-image` | Truly optional imagery (section NOT in IMAGE_SLOTS.md) missing | note | no |
+| `console-error` | Uncaught JavaScript errors on page load | warning | no |
+| `console-error` | Error that breaks interactive functionality (e.g., cookie consent script throws, form validator throws) | critical | yes |
+| `network-error` | 4xx/5xx on a page asset (not analytics/third-party) | critical | yes |
+| `network-error` | 4xx on analytics or optional third-party asset | note | no |
+
+**If a situation straddles rows, escalate — pick the higher severity.**
+
+A finding that SHOULD be `rendered-fidelity` but is categorized `gap-image` is a common failure mode (it hides severity behind the softer category). When in doubt: if the direction brief has a slot for this imagery, it's rendered-fidelity.
+
+## Post-run self-check (mandatory — run before returning)
+
+After appending all findings to `.redesign-state/review-findings.md`, re-read every finding block you just wrote and verify:
+
+1. All required fields present (Severity, Category, Blocking, Brief area, Slot ID, Image action, Where, Screenshots, What, Brief citation, Why, Suggested fix, Disposition, Related findings, Status). Missing field → fix inline.
+2. Severity matches the decision table for the Category + described condition. If the What field describes a brief-mandated slot being empty but Category says `gap-image`, re-classify to `rendered-fidelity` and update severity per the table. Log the correction in the summary.
+3. Blocking matches the decision table. If Severity is critical per the table but Blocking is `no`, fix.
+4. `rendered-fidelity` findings MUST have non-`n/a` Brief citation AND Brief area AND (if image-related) Image action.
+5. `gap-image` findings MUST have non-`n/a` Disposition (defaulting to `pending`) AND Image action. If the finding's target section is in `IMAGE_SLOTS.md`, the finding is mis-categorized — convert to `rendered-fidelity`.
+6. For each rendered-fidelity finding that's image-related, verify a Slot ID exists pointing to a real row in `IMAGE_SLOTS.md`. If the brief mandates the slot but no inventory row exists, surface the missing-slot-inventory case in the summary — do not manufacture a slot ID.
+
+Report in the summary: "Self-check: <N findings validated, M reclassifications, K missing-slot-inventory cases surfaced>."
+
+This self-check exists because the first real browser-qa run (saxen, commit `e9692d6`) emitted a "hero visibly empty" finding as `gap-image` / `note` / non-blocking, despite the agent's own rubric saying that case should be Critical. The decision table + self-check are the defense against that failure mode.
+
+## Architect precedence
+
+When an architect finding in the same file covers the same slot at a higher abstraction (e.g., architect: "brief P2 committed, hero image missing"), set `Related findings:` to that finding's ID and mark yours as `duplicate-of` in the What field: "duplicate of architect finding ARCH-XX; providing rendered screenshot evidence." The web-designer acts on the architect finding; yours is context. Architect remains authoritative on brief-violation severity; you provide rendered evidence.
+
+When a `gap-image` finding is `rejected` or `converted`, update the Disposition in place — do NOT delete the entry. The entry is the audit trail that prevents re-filing.
 
 ---
 

@@ -56,8 +56,9 @@ violating the direction brief.
 9. Read `SITE_PLAN_TEMPLATE.md` for this page's primary keyword and priority
 10. Read `public/images/IMAGE_CATALOG.md` if it exists — check for reusable images (cross-check against the direction brief's image strategy — some catalogued images may be flagged as violating the direction)
 11. Read `public/images/IMAGE_REQUESTS.md` if it exists — any rows already open for this route (pending or generated) so you use the existing ID rather than creating a duplicate
-12. When the page needs an image that is not already in the catalog AND is not covered by an existing manifest row, read the media-prompting skill (`.claude-plugin/skills/media-prompting/SKILL.md`) before writing the new row — do not improvise the prompt shape
-13. Check the translation files in `messages/` to understand existing content structure
+12. **Read `IMAGE_SLOTS.md` at project root — binding.** This enumerates every required image slot for every route, derived from the committed direction brief. You own resolving slots for the page you're building — update each slot's Resolution field as you decide its fate (catalog-reuse / manifest-row / image-present / justified-none). An unresolved slot on the route you just built is a Phase 3 compliance failure. See the "Image slot contract" section below.
+13. When the page needs an image that is not already in the catalog AND is not covered by an existing manifest row, read the media-prompting skill (`.claude-plugin/skills/media-prompting/SKILL.md`) before writing the new row — do not improvise the prompt shape
+14. Check the translation files in `messages/` to understand existing content structure
 
 **For specific page types, also read:**
 - **Legal pages (privacy, cookies):** the legal-compliance skill (`.claude-plugin/skills/legal-compliance/SKILL.md`)
@@ -195,9 +196,12 @@ Append one entry of this shape:
 | Identity test | ... | ... |
 | What we're moving away from | ... | ... |
 | Image requests — all `[NEEDS:image …]` markers in this page have matching manifest rows | PASS / FAIL | [list the IDs inserted, or explain why none were needed] |
+| Image slots — every `IMAGE_SLOTS.md` slot for this route has a terminal Resolution (catalog-reuse / manifest-row / image-present / justified-none with real brand-constraint reason) | PASS / FAIL | [list slot IDs and their resolutions; for justified-none rows, quote the brief-constraint reason] |
 
 **Overall:** pass / blocked-pending-rework / justified
 ```
+
+**Orchestrator enforcement on the slot-coverage row:** the `/redesign` drain reads each page's compliance entry. Any `Image slots` row that shows FAIL, or that resolves any slot to `justified-none` without quoting a legitimate brand-constraint from `design-direction.md`, blocks the page. "Asset pending from client" and "will do in a follow-up" are NOT legitimate brand-constraint reasons — those cases must be `manifest-row`. This prevents the failure mode where a page silently ships with an unresolved brief-mandated slot because the designer rationalized it away.
 
 Also state the overall verdict in your page summary reply to the orchestrator, but the *authoritative* record is the log file — the summary is a convenience, not the contract.
 
@@ -240,6 +244,19 @@ Follow this order for every image slot:
 5. **Always use `next/image`** with proper alt text, width, height, and `sizes` props. The marker goes inside the component where a placeholder would normally render, alongside a visible `.placeholder-content` wrap so the unresolved slot is visible in the browser.
 
 **Why markers are pointers, not prompts:** generation prompts are substantial (often 100+ words including negative prompts). Putting them in code makes diffs noisy and invites prompt drift when two markers say almost-but-not-quite the same thing. The manifest is the single source of truth; the marker just says "this slot is unresolved, its request is IMG-X."
+
+**Image slot contract (`IMAGE_SLOTS.md`):**
+
+`IMAGE_SLOTS.md` is the brief-derived list of required slots, and you resolve them. For the page/component you're building:
+
+1. **List the slots assigned to this route** in the inventory (search for your route's heading).
+2. **For each slot, choose a resolution:**
+   - **`catalog-reuse`** — an existing catalog image fits. Update the slot's Resolution to `catalog-reuse: <path>`, reference the image via `next/image` in the component.
+   - **`manifest-row`** — a new generated image is needed. Write an `IMG-...` row in `IMAGE_REQUESTS.md` per the media-prompting skill. Insert a `[NEEDS:image IMG-...]` marker in the component, wrapped with `.placeholder-content` so the unresolved slot is visible in the browser. Update the slot's Resolution to `manifest-row: IMG-...`.
+   - **`image-present`** — after a generated image has been installed, swap the `[NEEDS:image ...]` marker for the real `next/image` reference and update the slot Resolution. (This usually happens in a subsequent rework pass, not the initial build.)
+   - **`justified-none`** — the slot is deliberately not filled. This requires a concrete brand-constraint reason that cites `design-direction.md`. *"Client hasn't provided photos"* is NOT justified-none — that's asset-pending, resolve via `manifest-row`. Rubber-stamp justifications are flagged as Critical by the architect's absence audit.
+3. **Never leave a slot as `pending`** after your page is done. If you can't resolve it (unclear brief commitment, orphan slot you think shouldn't exist), log the ambiguity in `.redesign-state/decisions.md` and resolve to `manifest-row` as the safe default — the human can reject it later.
+4. **Don't invent new slots that aren't in the inventory** without updating the inventory first. If a composition decision during build reveals a needed image slot that the brief derivation missed, add a new `SLOT-<route>-<section>-<nnn>` row to `IMAGE_SLOTS.md` with the triggering brief quote. This keeps the inventory a living artifact rather than stale.
 
 **Translation Responsibility:**
 

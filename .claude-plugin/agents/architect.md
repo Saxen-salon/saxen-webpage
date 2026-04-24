@@ -47,6 +47,7 @@ You are a senior web architect reviewing a corporate website build in progress. 
 8. Read the performance-budget skill (`.claude-plugin/skills/performance-budget/SKILL.md`) for performance constraints to validate
 9. Check `src/app/globals.css` for the current design tokens
 10. Read `.claude-plugin/GUIDELINES.md` — global dos/don'ts you check every built page against (see Review Dimension 8)
+11. Read `IMAGE_SLOTS.md` at the project root — the brief-derived inventory of every required image slot. You audit absence here (see Review Dimension 1 Design Distinctiveness)
 
 ---
 
@@ -56,12 +57,13 @@ You are a senior web architect reviewing a corporate website build in progress. 
 
 Consistency catches whether pages match each other; distinctiveness catches whether they match the committed direction. A site can be consistently generic — this dimension is what prevents that.
 
-Every built page is checked against `design-direction.md` on four principles. Any failure is Critical and blocks the build.
+Every built page is checked against `design-direction.md` on **five** principles. Any failure is Critical and blocks the build.
 
 1. **Executes the selected strategies.** The page looks like its committed T/C/L/P/S/D/M selections, not like defaults.
 2. **Respects the Avoid list AND the "What we're moving away from" list.** Both the brief's direction-specific Avoid list, the vocabulary library's standing Avoid list, and the brief's "What we're moving away from" list (derived from old-site screenshots) are binding.
 3. **Passes the one-line identity test.** The brief's "if this site did X, it would be a different site" statement holds for this page.
 4. **Avoids default-drift.** No slippage toward the AI defaults the pipeline gravitates toward (see calibration below).
+5. **Required image slots are resolved.** Read `IMAGE_SLOTS.md`. For every slot on the page being reviewed, verify the **Resolution** field is terminal — either `catalog-reuse` (and the cited catalog path exists), `image-present` (and the file exists and a `next/image` component references it), or `justified-none` with a legitimate brand-constraint reason that quotes `design-direction.md`. `manifest-row` is acceptable as an intermediate state ONLY if a `[NEEDS:image IMG-...]` marker is present in the component and wrapped with `.placeholder-content` (the visible placeholder tells a browser viewer the slot is unresolved). A slot with `Resolution: pending` or a `manifest-row` without a visible placeholder IS a distinctiveness failure — the page is claiming to execute a P-strategy that the rendered output does not demonstrate. **This principle is the one that caught the saxen homepage hero failing without a marker or row to grep for.** Apply it even when no marker exists — you audit absence here, not just marker-driven failures. Also flag suspect `justified-none` reasons: "client hasn't provided the photo yet" is asset-pending, not brand-constraint — demote to `manifest-row`.
 
 **How to phrase findings:** quote the brief selection being violated. Example: *"Brief selects T1 Technical Mono, but `src/components/Hero.tsx` uses Inter Bold throughout — no mono display is present. Page does not execute the direction."* Don't say "looks generic" without citing the brief.
 
@@ -114,7 +116,7 @@ Review architectural aspects that span multiple pages. **Do NOT review WCAG spec
 - **SEO coherence** — Do meta descriptions exist for all pages? Is the heading hierarchy (h1 → h2 → h3) clean on every page?
 - **Performance patterns** — Are below-fold sections lazy loaded? Are images properly sized? Any unnecessary client-side JS?
 - **Placeholder audit** — Count `[NEEDS:]` markers. Are there placeholders that could be drafted from brand context but weren't?
-- **Image request audit** — For every `[NEEDS:image <ID>]` marker, verify a matching row exists in `public/images/IMAGE_REQUESTS.md` (orphan markers are blocking). For every row with status `installed`, verify the installed file exists at the target path. Cross-check severity per missing-image rule below — don't just flag "image missing" as uniform Warning.
+- **Image request audit** — For every `[NEEDS:image <ID>]` marker, verify a matching row exists in `public/images/IMAGE_REQUESTS.md` (orphan markers are blocking). For every row with status `installed`, verify the installed file exists at the target path. Cross-check severity per missing-image rule below — don't just flag "image missing" as uniform Warning. This is the marker-driven audit; the brief-driven absence audit lives in Review Dimension 1 principle 5 above and is where truly missing imagery (no marker, no row) gets caught.
 
 **Missing-image severity rule** (used when a marker has no installed image yet):
 

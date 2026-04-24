@@ -17,14 +17,19 @@ Read these before acting:
 - `.claude-plugin/skills/media-prompting/SKILL.md` — row schema, P-strategy → prompt language mapping, negative-prompt patterns. Load the examples as well.
 - `design-direction.md` — the committed P-strategy quotes that every prompt must cite.
 - `.claude-plugin/skills/company-brand/SKILL.md` — brand context for the prompt body.
+- `IMAGE_SLOTS.md` at project root — the authoritative list of required slots. **This is the new primary input.** The manifest and markers are resolved against the slot inventory, not just against each other.
 - `public/images/IMAGE_CATALOG.md` — reusable existing images (a missing image may not need a new request if an old-site asset fits).
 - `public/images/IMAGE_REQUESTS.md` — current manifest state.
 
-If `IMAGE_REQUESTS.md` doesn't exist yet, create it using the header from the manifest template (see `.claude-plugin/skills/media-prompting/SKILL.md` for the row schema and write the file seeded with the standard header + empty Requests section).
+If `IMAGE_REQUESTS.md` doesn't exist yet, create it using the header from the manifest template (see `.claude-plugin/skills/media-prompting/SKILL.md`).
+
+If `IMAGE_SLOTS.md` doesn't exist yet but `design-direction.md` does, derive the slot inventory as the first step — this is a migration that should have happened at Step 0 resumption but can also happen here. Log the derivation in `.redesign-state/decisions.md`. If `design-direction.md` is also missing, abort — the pipeline is too early for media prompts.
 
 ## Steps
 
-1. **Scan for image markers.** Run:
+1. **Parse the slot inventory.** Read every `### SLOT-...` header in `IMAGE_SLOTS.md` and collect: slot ID, route, section, role, P-strategy quote, Resolution state (pending / catalog-reuse / manifest-row / image-present / justified-none), and any path references in the Resolution.
+
+2. **Scan for image markers.** Run:
 
    ```bash
    grep -rn '\[NEEDS:image' src/ 2>/dev/null | sed 's/.*NEEDS:image \([^]]*\)\].*/\1 \0/' | sort -u
@@ -32,50 +37,58 @@ If `IMAGE_REQUESTS.md` doesn't exist yet, create it using the header from the ma
 
    Collect the list of `IMG-...` IDs referenced in code, with their file:line.
 
-2. **Parse the manifest.** Read every `## IMG-...` header in `public/images/IMAGE_REQUESTS.md` and collect:
+3. **Parse the manifest.** Read every `## IMG-...` header in `public/images/IMAGE_REQUESTS.md` and collect:
    - IDs
    - Status (pending | generated | installed | rejected)
    - Target slot path
    - Installed path (when present)
 
-3. **Classify findings into four buckets:**
+4. **Classify findings into six buckets** (4-way reconciliation across slots ↔ markers ↔ manifest ↔ files):
 
-   **(a) Orphan markers** — an `[NEEDS:image IMG-X]` marker in code with no matching manifest row. For each, read the surrounding component to infer: route, section, role, alt intent. Draft a new manifest row using the media-prompting skill's patterns. Do NOT guess the P-strategy — read it from `design-direction.md` and cite the quote verbatim. Append the new row to `IMAGE_REQUESTS.md` under the appropriate route grouping.
+   **(a) Unresolved slots** — a slot in `IMAGE_SLOTS.md` with `Resolution: pending`, OR resolved to `manifest-row: IMG-X` where IMG-X has no matching row in the manifest. These are the failures the saxen run missed — brief-mandated imagery that never made it into the manifest. For each, draft a manifest row using the media-prompting skill's patterns based on the slot's P-strategy + role + route. Append to `IMAGE_REQUESTS.md` and update the slot's Resolution to `manifest-row: IMG-...`. If a `[NEEDS:image IMG-...]` marker is also missing from the component, flag that for the web-designer — this command does not modify source code.
 
-   **(b) Orphan rows** — a manifest row (status not `rejected`) with no marker in code referencing it. Either (1) the row is stale from a removed page, or (2) the web-designer forgot to insert the marker. Report both possibilities; do not auto-delete. List them for human review in the summary.
+   **(b) Orphan markers** — an `[NEEDS:image IMG-X]` marker in code with no matching manifest row. For each, read the surrounding component to infer: route, section, role, alt intent. Check if the slot exists in `IMAGE_SLOTS.md`; if yes, use that slot's P-strategy quote and role. If no, create both the manifest row AND a new slot in `IMAGE_SLOTS.md` (the component introduced imagery the brief derivation didn't anticipate — the inventory needs to grow). Do NOT guess the P-strategy — read it from `design-direction.md` and cite verbatim.
 
-   **(c) Broken installed rows** — status `installed` but the file does not exist at the Installed path (or a sibling with the same basename and a different extension). Report as a convergence failure; the web-designer or human must restore the file or downgrade the row to `pending`.
+   **(c) Orphan rows** — a manifest row (status not `rejected`) with no marker in code AND no slot in the inventory referencing it. Either (1) the row is stale from a removed page, or (2) both the marker and slot were forgotten. Report both possibilities; do not auto-delete. List for human review.
 
-   **(d) Missing `next/image` references** — status `installed`, file exists, but no `next/image` component in `src/` references the installed path (search with `grep -rn "<installed-filename>" src/`). Means an image was installed but the marker was never swapped for a real reference. Report as a convergence failure for the web-designer to resolve.
+   **(d) Orphan slots** — a slot in `IMAGE_SLOTS.md` with `Resolution: catalog-reuse: <path>` where the path doesn't exist in `IMAGE_CATALOG.md`, or with `Resolution: image-present: <path>` where the file doesn't exist. Report as a broken resolution; web-designer must fix.
+
+   **(e) Broken installed rows** — status `installed` but the file does not exist at the Installed path (or a sibling with the same basename and a different extension). Report as a convergence failure; the web-designer or human must restore the file or downgrade the row to `pending`.
+
+   **(f) Missing `next/image` references** — status `installed`, file exists, but no `next/image` component in `src/` references the installed path (search with `grep -rn "<installed-filename>" src/`). Means an image was installed but the marker was never swapped for a real reference. Report as a convergence failure for the web-designer to resolve.
 
 4. **Refresh drift** (optional — only run if user requested or if `design-direction.md` has changed since the manifest was last edited). For each row with status `pending`, reread its P-strategy against the current `design-direction.md`:
    - If the strategy quote in the row no longer matches the committed strategy, rewrite the Prompt + Negative prompt body per the current strategy's grammar.
    - Preserve the row ID and all non-prompt fields (Source, Role, Dimensions, Focal point, etc.).
    - Git history captures the reason for the rewrite — no extra metadata needed on the row.
 
-5. **Report.** Produce a summary in this exact structure (one per category; skip empty categories):
+6. **Report.** Produce a summary in this exact structure (one per category; skip empty categories):
 
    ```markdown
    ## Image request reconciliation — <YYYY-MM-DD HH:MM>
 
-   **Orphan markers resolved** — N new manifest rows written:
-   - `IMG-home-hero-001` at src/app/[locale]/page.tsx:42
-   - …
+   **Unresolved slots resolved** — N slots moved from pending to manifest-row:
+   - `SLOT-home-hero-001` → created `IMG-home-hero-001` (P2 Environmental Portrait)
+   - `SLOT-home-team-teaser-001` → created `IMG-home-team-teaser-001` (P2)
 
-   **Orphan rows** — N manifest rows with no matching marker (human decision):
-   - `IMG-services-legacy-card-003` — target `public/images/services/legacy-card` — no reference found in src/. Possible stale row from a removed page. Leave / reject / delete?
+   **Orphan markers resolved** — N new manifest rows written:
+   - `IMG-services-cnc-card-001` at src/app/[locale]/services/cnc/page.tsx:18
+
+   **Orphan rows** — N manifest rows with neither marker nor slot (human decision):
+   - `IMG-services-legacy-card-003` — target `public/images/services/legacy-card` — no marker, no slot. Possible stale row from a removed page. Leave / reject / delete?
+
+   **Orphan slots** — N slots with broken resolution paths:
+   - `SLOT-about-facility-001` — resolution claims catalog-reuse at `public/images/facility/workshop.jpg` but file doesn't exist.
 
    **Broken installed rows** — N rows claim installed but file missing:
    - `IMG-about-team-002` — status `installed`, file `public/images/team/founder-portrait.jpg` does not exist.
 
-   **Missing next/image references** — N installed assets not referenced:
-   - `IMG-contact-map-bg-001` — installed at `public/images/hero/contact-map-bg.webp`, no `next/image` in src/ references it.
+   **Missing next/image references** — N installed assets not referenced in source.
 
-   **Refreshed prompts** — N rows rewritten against current direction brief:
-   - `IMG-home-hero-001` — P-strategy updated from P3 Process Documentary to P2 Environmental Portrait.
+   **Refreshed prompts** — N rows rewritten against current direction brief.
    ```
 
-6. **Log the run.** Append a one-line entry to `.redesign-state/decisions.md` recording the run timestamp and counts per category, so Step 8 can trust the manifest state.
+7. **Log the run.** Append a one-line entry to `.redesign-state/decisions.md` recording the run timestamp and counts per category, so Step 8 can trust the manifest state.
 
 ## What this command does NOT do
 

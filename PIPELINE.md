@@ -570,6 +570,11 @@ Once all checks pass (fixing issues as they're found), proceed directly to Step 
 | `legal-compliance` | Cookie consent implementation, GDPR form handling, privacy policy requirements, accessibility statements | `web-designer` | Step 6 Phase 3 (legal pages) |
 | `media-prompting` | Image-generation prompt patterns — row schema for `IMAGE_REQUESTS.md`, P-strategy → prompt language mapping (P1–P8), aspect/focal conventions per role, negative-prompt patterns to suppress AI stock-photo sheen | `web-designer`, `/generate-media-prompts` | Step 6 (during build) |
 
+**Imagery artifacts overview (not skills, but work together):**
+- **`IMAGE_SLOTS.md`** at project root — **authoritative inventory of every required image slot**, derived from the committed direction brief + site plan at end of Step 5.2. Each slot has a Resolution (pending / catalog-reuse / manifest-row / image-present / justified-none). This is the binding list the architect, web-designer Phase 3 self-check, and `/generate-media-prompts` all audit against. Closes the "missing image with no marker, no row" failure mode that the first saxen run hit.
+- `public/images/IMAGE_CATALOG.md` — existing images on disk (from Step 1 extraction or manual additions). Input. Slots resolve to `catalog-reuse` by referencing a catalog path.
+- `public/images/IMAGE_REQUESTS.md` — generation prompts for slots that need new images. Output destination for slots resolved to `manifest-row`.
+
 ---
 
 ## Agents Inventory
@@ -732,6 +737,7 @@ What each component protects against — all components are now built:
 | Analytics & Tracking skill | No measurement of site effectiveness | Step 6 + Step 10 |
 | Legal Compliance skill | GDPR implementation gaps | Step 6 Phase 3 |
 | `IMAGE_REQUESTS.md` manifest + `media-prompting` skill + orphan-marker block in Phase 3 compliance log | Generic AI-generated imagery, missing prompts for images the site needs, dual-source-of-truth drift between code markers and prompt text | Step 6 |
+| **`IMAGE_SLOTS.md` brief-derived inventory + architect absence audit (Dim 1.5) + web-designer slot-coverage Phase 3 row** | **Brief-mandated imagery missing with no marker and no manifest row** — the saxen failure mode: when a designer forgets to write both, no downstream check catches it, since every audit today is marker-driven. Slot inventory makes absence visible. | **Step 5.2 (derive) + Step 6 (resolve) + Step 7 (audit)** |
 | `browser-qa` agent + `/review-browser` (phase-gated) | Rendered failures invisible to source review — font fallback rendering, accent-as-field, text wrap collisions, form that renders but does nothing, visual gaps where imagery would prove a claim | Step 7 (phase boundaries + final review) |
 
 ---
@@ -774,6 +780,7 @@ project-root/
 ├── content-strategy.md                ← Written by content-strategist agent (Step 2)
 ├── redirects.md                       ← Old→new URL mapping (Step 4)
 ├── design-direction.md                ← Written by design-system skill (Step 5.1) — the committed visual language
+├── IMAGE_SLOTS.md                     ← Brief-derived inventory of required image slots (end of Step 5.2)
 │
 ├── .claude/commands/
 │   ├── redesign.md                    ← Pipeline orchestrator

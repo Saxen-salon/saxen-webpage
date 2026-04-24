@@ -30,6 +30,7 @@ Read these files and determine the current state:
 10. Read `.redesign-state/review-findings.md` — any unhandled review findings to drain before continuing?
 11. Read `.redesign-state/compliance-log.md` — is the most recently built page blocked on an unjustified FAIL?
 12. Search for `[NEEDS:]` markers: `grep -rn "NEEDS:" src/ messages/`
+13. Check if `IMAGE_SLOTS.md` exists at project root. If `design-direction.md` exists but `IMAGE_SLOTS.md` does not, the project predates the slot-inventory artifact — derive it as a migration step BEFORE executing any remaining steps. Process: read `design-direction.md` (the committed P-strategy + attribute→visual translation table + any explicit imagery clauses), read `SITE_PLAN_TEMPLATE.md` (routes + sections), cross-reference the `page-design` references, enumerate every required slot per the schema in `IMAGE_SLOTS.md`'s header, set each to `Resolution: pending`. Log an entry to `.redesign-state/decisions.md` noting the migration. This is a one-time backfill — future runs skip this step since the file now exists.
 
 Then report: "Steps 1-N are done. Starting from step N+1." Append a one-line entry to `.redesign-state/decisions.md` recording what you resumed from and why, then proceed immediately.
 
@@ -115,6 +116,17 @@ Append an entry to `.redesign-state/decisions.md` recording the direction summar
 If `/frontend-design` is present, launch the **web-designer agent** (Agent tool): "Execute the Tokenization sub-step in `.claude-plugin/skills/design-system/SKILL.md`. Read `design-direction.md` (binding) and `references/visual-vocabulary.md`. Derive color, typography, spacing, component, and interaction tokens that execute each selected strategy. Write all tokens to `src/app/globals.css` under `@theme inline`. Populate the body of `design-system/SKILL.md` with the token documentation, the direction-in-one-sentence copy, and the selected strategy string. Every token decision must trace to a direction brief selection — if it doesn't, add it to the brief first."
 
 After the agent returns, read `globals.css` and the populated `design-system/SKILL.md` — check that the direction brief's one-line identity test and Avoid list are referenced in the skill body.
+
+**Then derive the initial `IMAGE_SLOTS.md`.** Now that the direction brief and site plan are both committed, enumerate every required image slot per route and write them to `IMAGE_SLOTS.md` at the project root. Process:
+
+1. Read `design-direction.md` carefully — look for the committed P-strategy, the attribute→visual translation table, AND any explicit imagery clauses (e.g., "staff photos are first-class page elements," "hero is text against portrait," "service cards use material-texture imagery").
+2. Read `SITE_PLAN_TEMPLATE.md` — the enumerated routes with their purpose.
+3. For each route + section where the brief mandates imagery, create a `SLOT-<route>-<section>-<nnn>` row with `Resolution: pending` and the triggering brief quote verbatim in the P-strategy field. See the schema in `IMAGE_SLOTS.md`'s header.
+4. Group by route, in build-phase order (Phase 0 components, then Phase 1 core pages, etc.).
+5. If the brief's P-strategy is subtle (P5 Abstract Texture, P8 Diagrammatic, P7 Illustrated Editorial) — still enumerate slots for hero or section anchors where the brief implies imagery.
+6. Don't guess. If a slot isn't clearly brief-mandated, don't invent it — the web-designer can add one during build if composition demands it.
+
+This is the binding imagery contract the rest of the pipeline audits against. A missing slot here means the architect absence audit won't catch the failure.
 
 ---
 

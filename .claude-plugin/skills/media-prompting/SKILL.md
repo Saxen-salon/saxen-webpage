@@ -11,8 +11,14 @@ The manifest is the source of truth for image requests. Code markers like `[NEED
 
 ## When to use
 
-- During Step 6 page build: every time the web-designer decides a page section needs an image that doesn't already exist in `public/images/IMAGE_CATALOG.md`, it adds a manifest row using these patterns.
-- During `/generate-media-prompts`: reconciling orphan `[NEEDS:image …]` markers into manifest rows, or refreshing rows after a `design-direction.md` revision.
+- During Step 6 page build: every time the web-designer resolves an `IMAGE_SLOTS.md` slot to `manifest-row`, it uses these patterns to write the manifest row.
+- During `/generate-media-prompts`: reconciling unresolved slots, orphan markers, and orphan rows. The command is a 4-way reconciliation across `IMAGE_SLOTS.md` (authoritative slot inventory), `[NEEDS:image ...]` markers in code, `IMAGE_REQUESTS.md` rows, and installed files.
+
+## The slot inventory is authoritative
+
+`IMAGE_SLOTS.md` at project root enumerates every image slot the committed direction brief requires. It's derived from `design-direction.md` + `SITE_PLAN_TEMPLATE.md` at Step 5.2 end (or as a migration step at Step 0 resumption). Every slot has a `Resolution` field that must end in `catalog-reuse`, `manifest-row`, `image-present`, or `justified-none`.
+
+When resolving a slot to `manifest-row`, the manifest row you write uses the slot's role, P-strategy quote, and context — you're not inventing; you're executing the brief-derived requirement. The ID convention `IMG-<route-slug>-<section>-<nnn>` should align with the slot ID `SLOT-<route-slug>-<section>-<nnn>` where possible (same numeric suffix) so reconciliation is cheap.
 
 ## Manifest row schema
 
