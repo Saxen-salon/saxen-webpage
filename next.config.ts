@@ -34,6 +34,7 @@ const securityHeaders = [
       "img-src 'self' data: https:",
       "font-src 'self' data:",
       "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      "frame-src https://www.openstreetmap.org",
       "frame-ancestors 'none'",
     ].join('; '),
   },
@@ -41,6 +42,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  async redirects() {
+    return [
+      { source: '/treatments', destination: '/ydelser', permanent: true },
+      { source: '/employees', destination: '/team', permanent: true },
+      { source: '/cookiepolicy', destination: '/cookie-politik', permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

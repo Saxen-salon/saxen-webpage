@@ -4,20 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Corporate website for **Saxen** — Hairsalon. This is a full rebuild/redesign migrating from an old site to a modern Next.js application.
+Corporate website for **Saxen** — a full-service hair salon located at Jernbanegade 1, 9800 Hjørring, Denmark. This is a full rebuild/redesign migrating from an old minimal Bootstrap site to a modern Next.js application.
 
 - **Old site domain:** https://www.saxen.dk/
 - **New site domain:** {{DOMAIN}}
+- **Business type:** Hair salon (frisørsalon) — B2C, local market (Hjørring / North Jutland)
+- **Staff:** 6 named stylists — Susanne, Anita, Heidi, Tina, Merete, Camilla
+- **Contact:** 98 92 00 99 | susanne@karlborg.dk
+- **Hours:** Mon–Fri 09:00–17:30, Sat 08:00–13:00
+- **Booking:** https://saxenhjoerring.bestilling.nu (Admind platform)
 
-The site is multilingual (da) and serves as both a marketing site and technical resource for B2B customers.
+The site is in Danish (primary language). English version is optional — confirm with client.
 
 ### Key site sections
-- **Services** — core service/product categories
-- **Cases** — customer case studies
-- **About Us** — company story, team, certifications
-- **Contact** — inquiry forms, location, direct contacts
-- **News** — blog/updates (when content pipeline exists)
-- **Jobs** — career opportunities
+- **Treatments & Prices** — full service menu with transparent pricing (35+ services across 5 categories)
+- **Staff / Team** — six stylists with photos and bios (bios need client input)
+- **About / Story** — founding story and salon identity (content needs client input — no about page on old site)
+- **Contact** — booking CTA, phone, email, address, map, opening hours
+- **News / Blog** — optional, for when content pipeline exists
+- **Jobs** — optional career opportunities section
 
 ## Redesign Pipeline
 

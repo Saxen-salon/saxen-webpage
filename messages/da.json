@@ -1,22 +1,38 @@
 {
   "header": {
     "home": "Forside",
-    "services": "Ydelser",
-    "cases": "Cases",
-    "about": "Om os",
-    "contact": "Kontakt",
-    "cta": "Kontakt os"
+    "nav": {
+      "ydelser": "Ydelser",
+      "team": "Team",
+      "omOs": "Om os",
+      "kontakt": "Kontakt"
+    },
+    "bookCta": "Book tid",
+    "phone": "98 92 00 99",
+    "openMenu": "Åbn menu",
+    "closeMenu": "Luk menu"
   },
   "footer": {
-    "description": "Virksomhedsbeskrivelse her.",
-    "services": "Ydelser",
-    "company": "Virksomhed",
-    "about": "Om os",
-    "cases": "Cases",
-    "contact": "Kontakt",
-    "privacy": "Privatlivspolitik",
-    "cookies": "Cookiepolitik",
-    "copyright": "Alle rettigheder forbeholdes."
+    "salonName": "Saxen Frisør",
+    "address": "Jernbanegade 1, 9800 Hjørring",
+    "phone": "98 92 00 99",
+    "email": "susanne@karlborg.dk",
+    "hours": {
+      "weekdays": "Man–Fre 09:00–17:30",
+      "saturday": "Lør 08:00–13:00"
+    },
+    "bookOnline": "Book online",
+    "nav": {
+      "ydelser": "Ydelser",
+      "team": "Team",
+      "omOs": "Om os",
+      "kontakt": "Kontakt"
+    },
+    "legal": {
+      "cookies": "Cookiepolitik",
+      "privacy": "Privatlivspolitik"
+    },
+    "copyright": "© 2026 Saxen Frisør"
   },
   "cookies": {
     "title": "Cookieindstillinger",
@@ -33,7 +49,58 @@
     "customize": "Tilpas"
   },
   "home": {
-    "title": "Velkommen"
+    "meta": {
+      "title": "Frisør i Hjørring | Saxen Frisør",
+      "description": "Saxen Frisør i Hjørring — fulde priser på alle ydelser, ingen overraskelser. Book online eller ring på 98 92 00 99. 6 erfarne frisører i hjertet af Hjørring."
+    },
+    "hero": {
+      "headline": "Vi kender dit hår.",
+      "subHeadline": "Fulde priser på alle ydelser — ingen overraskelser.",
+      "ctaPrimary": "Se priser",
+      "ctaSecondary": "Book tid",
+      "location": "Jernbanegade 1, Hjørring"
+    },
+    "prices": {
+      "eyebrow": "Prisoversigt",
+      "headline": "Åbne priser — altid.",
+      "serviceCount": "35+",
+      "serviceCountLabel": "ydelser med fulde priser",
+      "body": "Hos Saxen finder du altid prisen på forhånd — ingen overraskelser, ingen ubehagelige regninger. Vi er én af de få frisørsaloner i Hjørring, der offentliggør alle priser til punkt og prikke.",
+      "cta": "Se alle priser"
+    },
+    "team": {
+      "eyebrow": "Holdet",
+      "headline": "Mød holdet",
+      "body": "Vi er seks frisører med mange års erfaring. De fleste af vores kunder kender os ved navn.",
+      "cta": "Mød vores team",
+      "members": {
+        "susanne": "Susanne",
+        "anita": "Anita",
+        "heidi": "Heidi",
+        "tina": "Tina",
+        "merete": "Merete",
+        "camilla": "Camilla"
+      },
+      "altText": "Portræt af {name}"
+    },
+    "location": {
+      "eyebrow": "Find os",
+      "address": "Jernbanegade 1",
+      "city": "9800 Hjørring",
+      "hoursTitle": "Åbningstider",
+      "weekdays": "Man–Fre",
+      "weekdayHours": "09:00–17:30",
+      "saturday": "Lørdag",
+      "saturdayHours": "08:00–13:00",
+      "sunday": "Søndag",
+      "sundayHours": "Lukket",
+      "phone": "98 92 00 99",
+      "phoneLabel": "Ring til os",
+      "bookingNote": "Farvning og highlights kræver en telefonisk konsultation"
+    },
+    "colorStrip": {
+      "copy": "Farve og highlights? Ring på 98 92 00 99 — vi tager os tid til at gøre det rigtigt."
+    }
   },
   "notFound": {
     "title": "Siden blev ikke fundet",
@@ -44,5 +111,110 @@
     "title": "Noget gik galt",
     "description": "Der opstod en uventet fejl. Prøv venligst igen.",
     "tryAgain": "Prøv igen"
+  },
+  "kontakt": {
+    "meta": {
+      "title": "Kontakt | Saxen Frisør Hjørring",
+      "description": "Kontakt Saxen Frisør i Hjørring. Ring på 98 92 00 99, besøg os på Jernbanegade 1 eller book online."
+    },
+    "eyebrow": "Kontakt",
+    "headline": "Kom forbi",
+    "lead": "Vi glæder os til at se dig her i salonen. Ring, skriv, eller book direkte online.",
+    "phone": {
+      "label": "Telefon",
+      "number": "98 92 00 99"
+    },
+    "address": {
+      "label": "Adresse",
+      "street": "Jernbanegade 1",
+      "city": "9800 Hjørring"
+    },
+    "email": {
+      "label": "E-mail",
+      "address": "susanne@karlborg.dk"
+    },
+    "hours": {
+      "label": "Åbningstider",
+      "weekdays": "Man–Fre 09:00–17:30",
+      "saturday": "Lørdag 08:00–13:00",
+      "sunday": "Søndag Lukket"
+    },
+    "colorNote": {
+      "text": "Ønsker du farve eller highlights, bedes du ringe til os — vi tager den tid der skal til for at finde det rigtige for dig."
+    },
+    "booking": {
+      "primary": "Book tid online",
+      "mapLink": "Se på Google Maps"
+    }
+  },
+  "team": {
+    "meta": {
+      "title": "Vores Team | Saxen Frisør Hjørring",
+      "description": "Mød vores seks erfarne frisører hos Saxen i Hjørring. Vi kender vores kunder og tager udgangspunkt i dine ønsker."
+    },
+    "eyebrow": "Holdet",
+    "headline": "Mød vores team",
+    "lead": "Vi er seks frisører med mange års erfaring, og de fleste af vores kunder kender os ved navn.",
+    "closing": "Vi glæder os til at se dig her i salonen.",
+    "bookCta": "Book tid online",
+    "members": {
+      "susanne": { "name": "Susanne", "bio": "[NEEDS: Kort bio fra Susanne — speciale og erfaring]", "alt": "Foto af Susanne, frisør hos Saxen Frisør" },
+      "anita": { "name": "Anita", "bio": "[NEEDS: Kort bio fra Anita — speciale og erfaring]", "alt": "Foto af Anita, frisør hos Saxen Frisør" },
+      "heidi": { "name": "Heidi", "bio": "[NEEDS: Kort bio fra Heidi — speciale og erfaring]", "alt": "Foto af Heidi, frisør hos Saxen Frisør" },
+      "tina": { "name": "Tina", "bio": "[NEEDS: Kort bio fra Tina — speciale og erfaring]", "alt": "Foto af Tina, frisør hos Saxen Frisør" },
+      "merete": { "name": "Merete", "bio": "[NEEDS: Kort bio fra Merete — speciale og erfaring]", "alt": "Foto af Merete, frisør hos Saxen Frisør" },
+      "camilla": { "name": "Camilla", "bio": "[NEEDS: Kort bio fra Camilla — speciale og erfaring]", "alt": "Foto af Camilla, frisør hos Saxen Frisør" }
+    }
+  },
+  "omOs": {
+    "meta": {
+      "title": "Om os | Saxen Frisør Hjørring",
+      "description": "Lær Saxen Frisør at kende — seks erfarne frisører på Jernbanegade 1 i Hjørring med åbne priser og et personligt fokus."
+    },
+    "eyebrow": "Om os",
+    "headline": "Saxen — din frisør i Hjørring",
+    "lead": "Hos Saxen er vi seks frisører med mange års erfaring. Vi er på Jernbanegade 1 i Hjørring, og vi kender de fleste af vores kunder ved navn."
+  },
+  "cookiePolitik": {
+    "meta": {
+      "title": "Cookiepolitik | Saxen Frisør",
+      "description": "Saxen Frisørs cookiepolitik — hvad vi gemmer, hvorfor, og hvordan du styrer dine præferencer."
+    }
+  },
+  "privatlivspolitik": {
+    "meta": {
+      "title": "Privatlivspolitik | Saxen Frisør",
+      "description": "Saxen Frisørs privatlivspolitik og GDPR-information. Vi behandler dine oplysninger ansvarligt."
+    }
+  },
+  "ydelser": {
+    "meta": {
+      "title": "Prisliste | Saxen Frisør Hjørring",
+      "description": "Åbne priser på alle ydelser hos Saxen Frisør i Hjørring. Se vores fulde prisliste — klipninger, farve, opsætninger, bryn og herrer. Ingen overraskelser."
+    },
+    "intro": {
+      "eyebrow": "Ydelser & Priser",
+      "headline": "Åbne priser — altid.",
+      "lead": "Vi har altid haft åbne priser — det synes vi er den mest ærlige måde at drive frisørsalon på. Det, du ser her, er det, du betaler."
+    },
+    "colorNote": {
+      "text": "Ønsker du farve eller highlights, bedes du ringe til os, så vi kan aftale det bedste resultat for dig."
+    },
+    "pricelist": {
+      "eyebrow": "Prisliste",
+      "heading": "Alle ydelser og priser",
+      "note": "Priserne er gældende og opdateres løbende. Eventuelle tillæg aftales altid inden behandling."
+    },
+    "colorCallout": {
+      "copy": "Farve og highlights? Ring til os på 98 92 00 99 — vi tager os tid til at finde det rigtige for dig."
+    },
+    "booking": {
+      "eyebrow": "Book tid",
+      "headline": "Klar til en ny frisure?",
+      "body": "Book din tid online, eller ring til os — vi hjælper dig med at finde det rigtige tidspunkt.",
+      "ctaPrimary": "Book online",
+      "ctaSecondary": "Kontakt os",
+      "phoneLabel": "Eller ring:"
+    }
   }
 }

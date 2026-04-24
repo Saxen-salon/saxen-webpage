@@ -1,0 +1,10 @@
+COMPANY_NAME=Saxen
+PROJECT_DIR=saxen-webpage
+COMPANY_DESCRIPTION=Hairsalon
+GITHUB_ORG=Saxen-salon
+REPO_NAME=saxen-webpage
+OLD_DOMAIN=https://www.saxen.dk/
+DOMAIN=''
+TAGLINE=''
+LANGUAGES=da
+DEFAULT_LOCALE=da

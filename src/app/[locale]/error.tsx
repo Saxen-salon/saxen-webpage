@@ -11,14 +11,75 @@ export default function Error({
   const t = useTranslations("error");
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center px-6">
-      <div className="text-center max-w-md">
-        <p className="text-6xl font-bold text-neutral-300 mb-4">500</p>
-        <h1 className="text-2xl font-semibold mb-2">{t("title")}</h1>
-        <p className="text-neutral-600 mb-8">{t("description")}</p>
+    <div
+      style={{
+        minHeight: "60vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "0 var(--container-padding)",
+        backgroundColor: "var(--color-background)",
+      }}
+    >
+      <div style={{ textAlign: "center", maxWidth: "28rem" }}>
+        <p
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "var(--text-6xl)",
+            fontWeight: 400,
+            color: "var(--color-border)",
+            marginBottom: "var(--space-6)",
+            lineHeight: "var(--leading-display)",
+          }}
+        >
+          500
+        </p>
+        <h1
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "var(--text-3xl)",
+            fontWeight: 400,
+            color: "var(--color-foreground)",
+            marginBottom: "var(--space-4)",
+            lineHeight: "var(--leading-tight)",
+          }}
+        >
+          {t("title")}
+        </h1>
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-base)",
+            color: "var(--color-ink-600)",
+            marginBottom: "var(--space-10)",
+            lineHeight: "var(--leading-normal)",
+          }}
+        >
+          {t("description")}
+        </p>
         <button
           onClick={reset}
-          className="inline-flex items-center justify-center rounded-md bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-sm)",
+            fontWeight: 500,
+            backgroundColor: "var(--color-accent-600)",
+            color: "var(--color-ink-50)",
+            border: "none",
+            borderRadius: 0,
+            padding: "0.75rem 1.75rem",
+            cursor: "pointer",
+            letterSpacing: "0.04em",
+            transition: "background-color var(--duration-fast) var(--easing-out)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+              "var(--color-accent-500)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+              "var(--color-accent-600)";
+          }}
         >
           {t("tryAgain")}
         </button>

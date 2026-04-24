@@ -1,10 +1,44 @@
 export default function Loading() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" />
-        <span className="sr-only">Loading…</span>
+    <div
+      style={{
+        minHeight: "60vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-background)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "var(--space-6)",
+        }}
+      >
+        {/* S4: no rounded corners — use a hairline square indicator */}
+        <div
+          style={{
+            width: "2rem",
+            height: "2rem",
+            border: "1px solid var(--color-border)",
+            borderTopColor: "var(--color-accent-500)",
+            borderRadius: 0,
+            animation: "saxen-spin 600ms linear infinite",
+          }}
+        />
+        <span className="sr-only">Indlæser…</span>
       </div>
+
+      <style>{`
+        @keyframes saxen-spin {
+          to { transform: rotate(360deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          @keyframes saxen-spin { to { transform: none; } }
+        }
+      `}</style>
     </div>
   );
 }

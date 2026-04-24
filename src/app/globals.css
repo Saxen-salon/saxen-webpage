@@ -1,92 +1,216 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────
-   Design Tokens
-   These will be set by the web-designer agent based
-   on the company brand. Starting with neutral defaults.
+   Saxen Frisør — Design Tokens
+   Strategy: T5 / C3 / L2 / P2 / S4 / D2 / M1
+   All tokens trace back to design-direction.md
    ────────────────────────────────────────────────── */
 
-:root {
-  --background: #FAFAFA;
-  --foreground: #111111;
-
-  /* Neutral palette — replace with brand colors */
-  --color-neutral-950: #0a0a0a;
-  --color-neutral-900: #171717;
-  --color-neutral-800: #262626;
-  --color-neutral-700: #404040;
-  --color-neutral-600: #525252;
-  --color-neutral-500: #737373;
-  --color-neutral-400: #a3a3a3;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-50: #fafafa;
-
-  /* Brand accent — replace with company accent color */
-  --color-accent: #2563eb;
-  --color-accent-light: #3b82f6;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
 
-  --color-neutral-950: var(--color-neutral-950);
-  --color-neutral-900: var(--color-neutral-900);
-  --color-neutral-800: var(--color-neutral-800);
-  --color-neutral-700: var(--color-neutral-700);
-  --color-neutral-600: var(--color-neutral-600);
-  --color-neutral-500: var(--color-neutral-500);
-  --color-neutral-400: var(--color-neutral-400);
-  --color-neutral-300: var(--color-neutral-300);
-  --color-neutral-200: var(--color-neutral-200);
-  --color-neutral-100: var(--color-neutral-100);
-  --color-neutral-50: var(--color-neutral-50);
+  /* ────────────────────────────────────────────────
+     COLOR — C3 Ink + Cream
+     Deep warm ink (#0F0E0C) on warm cream (#FAF7F2).
+     All neutrals carry warm-yellow undertone — never
+     cool/blue-gray. Accent: dusty rose/terracotta,
+     chromatic and warm, used only on CTAs/active states.
+     WCAG AA enforced on all text/bg pairings.
+     ──────────────────────────────────────────────── */
 
-  --color-accent: var(--color-accent);
-  --color-accent-light: var(--color-accent-light);
+  /* Ink scale — warm cream → deep ink (warm undertone throughout) */
+  --color-ink-50:  #FAF7F2;   /* warm cream — page background */
+  --color-ink-100: #F3EDE3;   /* warm off-white — surface alt */
+  --color-ink-200: #E8DDD0;   /* warm light — borders subtle */
+  --color-ink-300: #D5C8B6;   /* warm mid-light — muted elements */
+  --color-ink-400: #B8A896;   /* warm mid — muted text */
+  --color-ink-500: #8C7B6B;   /* warm medium — secondary text */
+  --color-ink-600: #685B4D;   /* warm dark — body on light bg */
+  --color-ink-700: #4A3F34;   /* warm deeper — headings */
+  --color-ink-800: #312820;   /* warm near-dark */
+  --color-ink-900: #1C1510;   /* warm near-ink */
+  --color-ink-950: #0F0E0C;   /* deep ink — primary text, borders */
 
-  /* Font families — set by the designer via next/font */
-  --font-display: var(--font-display-family, system-ui);
-  --font-body: var(--font-body-family, system-ui);
-  --font-mono: var(--font-mono-family, monospace);
+  /* Accent scale — dusty rose / warm terracotta */
+  /* Accent-500 is the primary CTA color.          */
+  /* Chromatic, warm, never pastel, never day-glo. */
+  --color-accent-50:  #FCF5F0;   /* near-white blush */
+  --color-accent-100: #F7E6DC;   /* very light blush */
+  --color-accent-200: #EEC9B4;   /* light terracotta tint */
+  --color-accent-300: #E0A888;   /* warm terracotta light */
+  --color-accent-400: #CE8460;   /* terracotta mid */
+  --color-accent-500: #B8623A;   /* dusty terracotta — primary CTA */
+  --color-accent-600: #9A4C2C;   /* deeper terracotta */
+  --color-accent-700: #7A3A21;   /* dark terracotta */
+  --color-accent-800: #5A2A17;   /* very dark */
+  --color-accent-900: #3A1A0E;   /* near-black terracotta */
+  --color-accent-950: #200E07;   /* deepest */
+
+  /* Semantic color tokens */
+  --color-background:    var(--color-ink-50);   /* #FAF7F2 — warm cream page base */
+  --color-foreground:    var(--color-ink-950);  /* #0F0E0C — deep ink primary text */
+  --color-surface:       var(--color-ink-50);   /* same as background for most surfaces */
+  --color-surface-alt:   var(--color-ink-100);  /* #F3EDE3 — slightly warmer surface */
+  --color-border:        var(--color-ink-300);  /* #D5C8B6 — hairline structural dividers */
+  --color-border-subtle: var(--color-ink-200);  /* #E8DDD0 — secondary/quiet borders */
+  --color-muted:         var(--color-ink-600);  /* #685B4D — muted/secondary text — AA compliant on cream */
+
+  /* ────────────────────────────────────────────────
+     TYPOGRAPHY — T5 Contrast Pair
+     Playfair Display (display serif) +
+     Work Sans (geometric sans body).
+     Fonts loaded via next/font in layout.tsx;
+     CSS variables set there and referenced here.
+     ──────────────────────────────────────────────── */
+
+  --font-display: var(--font-playfair);    /* Playfair Display — serif display */
+  --font-body:    var(--font-work-sans);   /* Work Sans — geometric sans body */
+
+  /* Size scale — D2 Editorial: hero 72–88px desktop */
+  --text-xs:   0.75rem;    /*  12px */
+  --text-sm:   0.875rem;   /*  14px */
+  --text-base: 1rem;       /*  16px */
+  --text-lg:   1.125rem;   /*  18px */
+  --text-xl:   1.25rem;    /*  20px */
+  --text-2xl:  1.5rem;     /*  24px */
+  --text-3xl:  1.875rem;   /*  30px */
+  --text-4xl:  2.25rem;    /*  36px */
+  --text-5xl:  3rem;       /*  48px */
+  --text-6xl:  3.75rem;    /*  60px */
+  --text-7xl:  4.5rem;     /*  72px — D2 hero minimum */
+  --text-8xl:  5.5rem;     /*  88px — D2 hero maximum */
+
+  /* Line heights: display tight, body comfortable */
+  --leading-display: 1.05;    /* T5 serif display — very tight */
+  --leading-tight:   1.15;    /* large display subheads */
+  --leading-snug:    1.25;    /* medium headings */
+  --leading-normal:  1.5;     /* body text minimum */
+  --leading-relaxed: 1.625;   /* body text comfortable — price list rows */
+
+  /* ────────────────────────────────────────────────
+     SPACING — D2 Editorial
+     Base unit: 4px. Section spacing 140–180px.
+     --section-gap at 160px is the canonical inter-
+     section measure; tighter variant at 112px for
+     adjacent related sections.
+     ──────────────────────────────────────────────── */
+
+  --space-1:  0.25rem;    /*   4px */
+  --space-2:  0.5rem;     /*   8px */
+  --space-3:  0.75rem;    /*  12px */
+  --space-4:  1rem;       /*  16px */
+  --space-5:  1.25rem;    /*  20px */
+  --space-6:  1.5rem;     /*  24px */
+  --space-8:  2rem;       /*  32px */
+  --space-10: 2.5rem;     /*  40px */
+  --space-12: 3rem;       /*  48px */
+  --space-16: 4rem;       /*  64px */
+  --space-20: 5rem;       /*  80px */
+  --space-24: 6rem;       /*  96px */
+  --space-28: 7rem;       /* 112px */
+  --space-32: 8rem;       /* 128px */
+  --space-40: 10rem;      /* 160px */
+  --space-48: 12rem;      /* 192px */
+  --space-64: 16rem;      /* 256px */
+
+  /* Section rhythm — D2 Editorial */
+  --section-gap:    10rem;   /* 160px — canonical inter-section spacing */
+  --section-gap-sm:  7rem;   /* 112px — tighter adjacent-section spacing */
+
+  /* Layout */
+  --container-max:     1280px;
+  --container-padding: 1.5rem;   /* 24px */
+
+  /* ────────────────────────────────────────────────
+     SHAPE — S4 Architectural Line
+     0px radius everywhere. Structural language is
+     1px hairline dividers — borders draw structure,
+     rarely close shapes. Matches price-list design.
+     ──────────────────────────────────────────────── */
+
+  --radius:        0px;                          /* S4 — no rounding anywhere */
+  --border-width:  1px;                          /* hairline as structural language */
+  --border-color:  var(--color-border);          /* #D5C8B6 */
+  --border-subtle: var(--color-border-subtle);   /* #E8DDD0 */
+
+  /* ────────────────────────────────────────────────
+     INTERACTION — M1 Architectural Stillness
+     150–200ms ease-out only. Color shifts on links
+     and buttons. No scroll-linked animation beyond
+     a single entry fade. No parallax.
+     ──────────────────────────────────────────────── */
+
+  --duration-fast:    150ms;
+  --duration-base:    200ms;
+  --easing-out:       cubic-bezier(0.0, 0.0, 0.2, 1);
+  --easing-in-out:    cubic-bezier(0.4, 0.0, 0.2, 1);
+
 }
+
+/* ──────────────────────────────────────────────────
+   GLOBAL BASE STYLES
+   ────────────────────────────────────────────────── */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* T5 — display serif for all headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), system-ui, sans-serif;
+  font-family: var(--font-display), Georgia, serif;
+  line-height: var(--leading-tight);
+  color: var(--color-foreground);
 }
 
-/* Scroll-triggered fade-in animation */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
+/* Focus-visible: accent color outline, keyboard-only */
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 3px;
+}
+
+/* Skip-to-content link — visually hidden until focused */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  position: fixed;
+  top: var(--space-4);
+  left: var(--space-4);
+  width: auto;
+  height: auto;
+  overflow: visible;
+  background: var(--color-accent-600);
+  color: var(--color-ink-50);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: 0;
+}
+
+/* M1 — Reduced motion: disable all transitions/animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
-
-.animate-fade-up {
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Stagger delays for sequential element animation */
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
 
 /* ──────────────────────────────────────────────────
    Placeholder Content Indicator

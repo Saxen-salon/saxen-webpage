@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 
 type CookiePreferences = {
@@ -38,6 +38,17 @@ export function CookieConsent() {
   const [preferences, setPreferences] = useState<CookiePreferences>(
     () => getStoredPreferences() ?? defaultPreferences,
   );
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Move focus to dialog when it becomes visible
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        dialogRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [visible]);
 
   function acceptAll() {
     const prefs = { necessary: true, analytics: true, marketing: true };
@@ -62,43 +73,81 @@ export function CookieConsent() {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
+      aria-modal="true"
       aria-label={t("title")}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-lg p-6"
+      tabIndex={-1}
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        backgroundColor: "var(--color-background)",
+        borderTop: "1px solid var(--color-border)",
+        padding: "var(--space-6)",
+        /* S4: no shadow, hairline border only */
+      }}
     >
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-lg font-semibold mb-2">{t("title")}</h2>
-        <p className="text-sm text-neutral-600 mb-4">{t("description")}</p>
+      <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
+        <h2
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "var(--text-lg)",
+            fontWeight: 400,
+            color: "var(--color-foreground)",
+            marginBottom: "var(--space-2)",
+          }}
+        >
+          {t("title")}
+        </h2>
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "var(--text-sm)",
+            color: "var(--color-muted)",
+            marginBottom: "var(--space-4)",
+            lineHeight: "var(--leading-normal)",
+          }}
+        >
+          {t("description")}
+        </p>
 
         {showDetails && (
-          <div className="mb-4 space-y-3">
-            <label className="flex items-center gap-3 text-sm">
-              <input type="checkbox" checked disabled className="accent-accent" />
+          <div style={{ marginBottom: "var(--space-4)", display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-3)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-foreground)", cursor: "default" }}>
+              <input
+                type="checkbox"
+                checked
+                disabled
+                style={{ accentColor: "var(--color-accent-500)", marginTop: "2px", flexShrink: 0 }}
+              />
               <span>
                 <strong>{t("necessary")}</strong> — {t("necessaryDesc")}
               </span>
             </label>
-            <label className="flex items-center gap-3 text-sm">
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-3)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-foreground)", cursor: "pointer" }}>
               <input
                 type="checkbox"
                 checked={preferences.analytics}
                 onChange={(e) =>
                   setPreferences((p) => ({ ...p, analytics: e.target.checked }))
                 }
-                className="accent-accent"
+                style={{ accentColor: "var(--color-accent-500)", marginTop: "2px", flexShrink: 0 }}
               />
               <span>
                 <strong>{t("analytics")}</strong> — {t("analyticsDesc")}
               </span>
             </label>
-            <label className="flex items-center gap-3 text-sm">
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-3)", fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-foreground)", cursor: "pointer" }}>
               <input
                 type="checkbox"
                 checked={preferences.marketing}
                 onChange={(e) =>
                   setPreferences((p) => ({ ...p, marketing: e.target.checked }))
                 }
-                className="accent-accent"
+                style={{ accentColor: "var(--color-accent-500)", marginTop: "2px", flexShrink: 0 }}
               />
               <span>
                 <strong>{t("marketing")}</strong> — {t("marketingDesc")}
@@ -107,30 +156,101 @@ export function CookieConsent() {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--space-3)" }}>
+          {/* Primary CTA — terracotta, flat, no radius */}
           <button
             onClick={acceptAll}
-            className="px-5 py-2 bg-neutral-900 text-white text-sm font-medium rounded hover:bg-neutral-800 transition-colors"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-sm)",
+              fontWeight: 500,
+              backgroundColor: "var(--color-accent-600)",
+              color: "var(--color-ink-50)",
+              border: "none",
+              borderRadius: 0,
+              padding: "0.5rem 1.25rem",
+              cursor: "pointer",
+              letterSpacing: "0.02em",
+              transition: "background-color 150ms ease-out",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-accent-500)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-accent-600)";
+            }}
           >
             {t("acceptAll")}
           </button>
+
+          {/* Secondary — ink border, flat, no radius */}
           <button
             onClick={rejectOptional}
-            className="px-5 py-2 border border-neutral-300 text-sm font-medium rounded hover:bg-neutral-50 transition-colors"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-sm)",
+              fontWeight: 500,
+              backgroundColor: "transparent",
+              color: "var(--color-foreground)",
+              border: "1px solid var(--color-foreground)",
+              borderRadius: 0,
+              padding: "0.5rem 1.25rem",
+              cursor: "pointer",
+              letterSpacing: "0.02em",
+              transition: "background-color 150ms ease-out, color 150ms ease-out",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-foreground)";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--color-ink-50)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--color-foreground)";
+            }}
           >
             {t("rejectOptional")}
           </button>
+
           {showDetails ? (
             <button
               onClick={acceptSelected}
-              className="px-5 py-2 border border-neutral-300 text-sm font-medium rounded hover:bg-neutral-50 transition-colors"
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                fontWeight: 500,
+                backgroundColor: "transparent",
+                color: "var(--color-foreground)",
+                border: "1px solid var(--color-border)",
+                borderRadius: 0,
+                padding: "0.5rem 1.25rem",
+                cursor: "pointer",
+                letterSpacing: "0.02em",
+                transition: "border-color 150ms ease-out",
+              }}
             >
               {t("savePreferences")}
             </button>
           ) : (
             <button
               onClick={() => setShowDetails(true)}
-              className="text-sm text-neutral-500 underline hover:text-neutral-700"
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                color: "var(--color-muted)",
+                background: "none",
+                border: "none",
+                borderRadius: 0,
+                padding: 0,
+                cursor: "pointer",
+                textDecoration: "underline",
+                transition: "color 150ms ease-out",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--color-foreground)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--color-muted)";
+              }}
             >
               {t("customize")}
             </button>
