@@ -73,10 +73,9 @@ export default async function HomePage({
         aria-label="Velkomst"
         style={{
           backgroundColor: "var(--color-background)",
-          paddingTop: "clamp(4rem, 8vw, 7rem)",
-          paddingBottom: "clamp(4rem, 8vw, 7rem)",
+          paddingTop: "clamp(5rem, 10vw, 9rem)",
+          paddingBottom: "clamp(5rem, 10vw, 9rem)",
           borderBottom: "1px solid var(--color-border-subtle)",
-          overflow: "hidden",
         }}
       >
         <div
@@ -86,172 +85,105 @@ export default async function HomePage({
             padding: "0 var(--container-padding)",
           }}
         >
-          {/* Asymmetric grid: ~60% text left / 40% visual right */}
+          {/* Location badge */}
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "var(--text-sm)",
+              fontWeight: 500,
+              color: "var(--color-muted)",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: "var(--space-8)",
+            }}
+          >
+            {t("hero.location")}
+          </p>
+
+          {/* Headline — full-width, no right panel */}
+          <h1
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(var(--text-7xl), 8vw, var(--text-8xl))",
+              fontWeight: 400,
+              lineHeight: "var(--leading-display)",
+              color: "var(--color-foreground)",
+              letterSpacing: "-0.02em",
+              marginBottom: "var(--space-8)",
+              maxWidth: "16ch",
+            }}
+          >
+            {t("hero.headline")}
+          </h1>
+
+          {/* Sub-headline */}
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "clamp(var(--text-lg), 2vw, var(--text-xl))",
+              fontWeight: 400,
+              color: "var(--color-muted)",
+              lineHeight: "var(--leading-normal)",
+              marginBottom: "var(--space-12)",
+              maxWidth: "44ch",
+            }}
+          >
+            {t("hero.subHeadline")}
+          </p>
+
+          {/* CTAs */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "1fr",
-              gap: "var(--space-12)",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "var(--space-4)",
               alignItems: "center",
             }}
-            className="hero-grid"
           >
-            {/* Left — typography composition */}
-            <div style={{ maxWidth: "640px" }}>
-              {/* Location badge */}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 500,
-                  color: "var(--color-muted)",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  marginBottom: "var(--space-6)",
-                }}
-              >
-                {t("hero.location")}
-              </p>
-
-              {/* Headline — Playfair Display, 72–88px, leading-display */}
-              <h1
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(var(--text-7xl), 7vw, var(--text-8xl))",
-                  fontWeight: 400,
-                  lineHeight: "var(--leading-display)",
-                  color: "var(--color-foreground)",
-                  letterSpacing: "-0.02em",
-                  marginBottom: "var(--space-8)",
-                }}
-              >
-                {t("hero.headline")}
-              </h1>
-
-              {/* Sub-headline — Work Sans, 18–20px, muted */}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "clamp(var(--text-lg), 2vw, var(--text-xl))",
-                  fontWeight: 400,
-                  color: "var(--color-muted)",
-                  lineHeight: "var(--leading-normal)",
-                  marginBottom: "var(--space-10)",
-                  maxWidth: "480px",
-                }}
-              >
-                {t("hero.subHeadline")}
-              </p>
-
-              {/* CTAs */}
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "var(--space-4)",
-                  alignItems: "center",
-                }}
-              >
-                {/* Primary — terracotta flat, 0px radius */}
-                <Link
-                  href="/ydelser"
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-sm)",
-                    fontWeight: 500,
-                    backgroundColor: "var(--color-accent-600)",
-                    color: "var(--color-ink-50)",
-                    textDecoration: "none",
-                    padding: "0.75rem 1.75rem",
-                    borderRadius: 0,
-                    letterSpacing: "0.04em",
-                    display: "inline-block",
-                    transition: "background-color var(--duration-fast) var(--easing-out)",
-                  }}
-                  className="cta-primary"
-                >
-                  {t("hero.ctaPrimary")}
-                </Link>
-
-                {/* Secondary — ink outline, flat */}
-                <Link
-                  href="/kontakt"
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-sm)",
-                    fontWeight: 500,
-                    border: "1px solid var(--color-foreground)",
-                    color: "var(--color-foreground)",
-                    backgroundColor: "transparent",
-                    textDecoration: "none",
-                    padding: "0.75rem 1.75rem",
-                    borderRadius: 0,
-                    letterSpacing: "0.04em",
-                    display: "inline-block",
-                    transition: "background-color var(--duration-fast) var(--easing-out), color var(--duration-fast) var(--easing-out)",
-                  }}
-                  className="cta-secondary"
-                >
-                  {t("hero.ctaSecondary")}
-                </Link>
-              </div>
-            </div>
-
-            {/* Right — typographic / textural composition on ink-100 */}
-            <div
-              aria-hidden="true"
+            <Link
+              href="/ydelser"
               style={{
-                position: "relative",
-                height: "420px",
-                backgroundColor: "var(--color-ink-100)",
-                overflow: "hidden",
-                flexShrink: 0,
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                fontWeight: 500,
+                backgroundColor: "var(--color-accent-600)",
+                color: "var(--color-ink-50)",
+                textDecoration: "none",
+                padding: "0.75rem 1.75rem",
+                borderRadius: 0,
+                letterSpacing: "0.04em",
+                display: "inline-block",
+                transition: "background-color var(--duration-fast) var(--easing-out)",
               }}
-              className="hero-visual"
+              className="cta-primary"
             >
-              {/* Large editorial number — 6 stylists */}
-              <span
-                style={{
-                  position: "absolute",
-                  bottom: "-0.15em",
-                  right: "-0.05em",
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(12rem, 22vw, 22rem)",
-                  fontWeight: 700,
-                  lineHeight: 1,
-                  color: "var(--color-ink-200)",
-                  userSelect: "none",
-                  letterSpacing: "-0.05em",
-                }}
-              >
-                6
-              </span>
-              {/* Hairline vertical accent */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "var(--space-8)",
-                  bottom: "var(--space-8)",
-                  left: "var(--space-8)",
-                  width: "1px",
-                  backgroundColor: "var(--color-border)",
-                }}
-              />
-            </div>
+              {t("hero.ctaPrimary")}
+            </Link>
+
+            <Link
+              href="/kontakt"
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-sm)",
+                fontWeight: 500,
+                border: "1px solid var(--color-foreground)",
+                color: "var(--color-foreground)",
+                backgroundColor: "transparent",
+                textDecoration: "none",
+                padding: "0.75rem 1.75rem",
+                borderRadius: 0,
+                letterSpacing: "0.04em",
+                display: "inline-block",
+                transition: "background-color var(--duration-fast) var(--easing-out), color var(--duration-fast) var(--easing-out)",
+              }}
+              className="cta-secondary"
+            >
+              {t("hero.ctaSecondary")}
+            </Link>
           </div>
         </div>
 
-        {/* Hero responsive styles */}
         <style>{`
-          @media (min-width: 768px) {
-            .hero-grid {
-              grid-template-columns: 60fr 40fr !important;
-              gap: var(--space-16) !important;
-            }
-            .hero-visual {
-              height: 520px !important;
-            }
-          }
           .cta-primary:hover {
             background-color: var(--color-accent-500) !important;
           }
