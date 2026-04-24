@@ -59,3 +59,7 @@ Append-only log of orchestrator decisions during the redesign pipeline. Each ent
 ### 2026-04-24T00:00 — Resumption: Starting Phase 1 (remaining pages)
 **Why:** Resuming from previous session. Steps 1–5.2 done, Phase 0 done (brief frozen), homepage page.tsx exists with full design-direction-compliant content but no compliance log entry. No compliance entry → pipeline treats as not yet logged; retroactive compliance entry recorded in compliance-log.md. No Phase 1 remaining pages (/ydelser, /kontakt), no Phase 2 or Phase 3 pages built yet.
 **Effect:** Building /ydelser and /kontakt (Phase 1 completion), then /team and /om-os (Phase 2), then /cookie-politik and /privatlivspolitik (Phase 3). Review and publish to follow.
+
+### 2026-04-24T13:49 — Resumption at Step 11
+**Why:** Steps 1-10 confirmed done. Branch was 1 commit ahead of origin/master (IMAGE_SLOTS.md root-fix). Build verified clean (11 routes, TypeScript clean). Proceeding to publish.
+**Effect:** Pushing to Vercel. 12 NEEDS markers remain for genuine client input.
