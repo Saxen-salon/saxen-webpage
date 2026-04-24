@@ -662,6 +662,7 @@ export default async function OmOsPage({
                 </p>
                 <a
                   href="tel:+4598920099"
+                  aria-label="Ring til os: 98 92 00 99"
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-base)",

@@ -51,7 +51,7 @@ const contactPageSchema = {
       closes: "13:00",
     },
   ],
-  hasMap: "https://www.openstreetmap.org/?mlat=57.4601&mlon=9.9729",
+  hasMap: "https://www.google.com/maps/search/?api=1&query=Jernbanegade+1%2C+9800+Hj%C3%B8rring",
 };
 
 // ─── Hours data ───────────────────────────────────────────────────────────────
@@ -204,7 +204,7 @@ export default async function KontaktPage({
               marginBottom: "var(--space-12)",
             }}
           >
-            {t("phone.label")}
+            {t("eyebrow")}
           </p>
 
           {/* Asymmetric two-column: primary info left (phone, address, email), booking right */}
@@ -241,6 +241,7 @@ export default async function KontaktPage({
                 </p>
                 <a
                   href="tel:+4598920099"
+                  aria-label="Ring til os: 98 92 00 99"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: "clamp(var(--text-4xl), 5vw, var(--text-6xl))",
@@ -863,6 +864,7 @@ export default async function KontaktPage({
                 {/* Secondary — phone */}
                 <a
                   href="tel:+4598920099"
+                  aria-label="Ring til os: 98 92 00 99"
                   style={{
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-sm)",

@@ -47,10 +47,14 @@ type StaffMember = {
   imageSrc: string;
 };
 
-// All six members — Susanne first, equal presentation
-const allMembers: StaffMember[] = [
+// Featured pair — larger portrait treatment, 55/45 asymmetric row
+const featuredMembers: StaffMember[] = [
   { key: "susanne", imageSrc: "/images/team/susanne.jpg" },
   { key: "anita", imageSrc: "/images/team/anita.jpg" },
+];
+
+// Supporting four — compact portrait row below
+const supportingMembers: StaffMember[] = [
   { key: "heidi", imageSrc: "/images/team/heidi.jpg" },
   { key: "tina", imageSrc: "/images/team/tina.jpg" },
   { key: "merete", imageSrc: "/images/team/merete.jpg" },
@@ -190,16 +194,17 @@ export default async function TeamPage({
             padding: "0 var(--container-padding)",
           }}
         >
-          {/* Equal 3-column grid — all six portraits the same size, Susanne first */}
+          {/* ── Featured row: 55/45 asymmetric — L2 Editorial Asymmetry ── */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "1fr",
               gap: "var(--space-8)",
+              marginBottom: "var(--space-12)",
             }}
-            className="team-grid"
+            className="team-featured-row"
           >
-            {allMembers.map((member) => {
+            {featuredMembers.map((member) => {
               const bio = t(`members.${member.key}.bio`);
               const alt = t(`members.${member.key}.alt`);
               const name = t(`members.${member.key}.name`);
@@ -216,7 +221,7 @@ export default async function TeamPage({
                       src={member.imageSrc}
                       alt={alt}
                       fill
-                      sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1280px) 33vw, 400px"
+                      sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, 55vw"
                       style={{
                         objectFit: "cover",
                         objectPosition: "center top",
@@ -224,12 +229,11 @@ export default async function TeamPage({
                       }}
                     />
                   </div>
-
                   <div style={{ paddingTop: "var(--space-5)" }}>
                     <h2
                       style={{
                         fontFamily: "var(--font-display)",
-                        fontSize: "var(--text-2xl)",
+                        fontSize: "var(--text-3xl)",
                         fontWeight: 400,
                         color: "var(--color-foreground)",
                         letterSpacing: "-0.01em",
@@ -238,7 +242,6 @@ export default async function TeamPage({
                     >
                       {name}
                     </h2>
-
                     <p
                       className={isPlaceholder(bio) ? "placeholder-content" : undefined}
                       style={{
@@ -256,14 +259,77 @@ export default async function TeamPage({
               );
             })}
           </div>
+
+          {/* ── Supporting row: 4-column compact portraits ── */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "var(--space-6)",
+            }}
+            className="team-supporting-row"
+          >
+            {supportingMembers.map((member) => {
+              const bio = t(`members.${member.key}.bio`);
+              const alt = t(`members.${member.key}.alt`);
+              const name = t(`members.${member.key}.name`);
+              return (
+                <article key={member.key}>
+                  <div
+                    style={{
+                      position: "relative",
+                      aspectRatio: "3/4",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      src={member.imageSrc}
+                      alt={alt}
+                      fill
+                      sizes="(max-width: 599px) 50vw, (max-width: 899px) 50vw, 25vw"
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: "center top",
+                        borderRadius: 0,
+                      }}
+                    />
+                  </div>
+                  <div style={{ paddingTop: "var(--space-4)" }}>
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "var(--text-xl)",
+                        fontWeight: 400,
+                        color: "var(--color-foreground)",
+                        letterSpacing: "-0.01em",
+                        marginBottom: "var(--space-2)",
+                      }}
+                    >
+                      {name}
+                    </h3>
+                    <p
+                      className={isPlaceholder(bio) ? "placeholder-content" : undefined}
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        fontWeight: 400,
+                        color: "var(--color-muted)",
+                        lineHeight: "var(--leading-relaxed)",
+                      }}
+                    >
+                      {bio}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
 
         <style>{`
-          @media (max-width: 599px) {
-            .team-grid { grid-template-columns: 1fr !important; }
-          }
-          @media (min-width: 600px) and (max-width: 899px) {
-            .team-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          @media (min-width: 768px) {
+            .team-featured-row { grid-template-columns: 55fr 45fr !important; }
+            .team-supporting-row { grid-template-columns: repeat(4, 1fr) !important; }
           }
         `}</style>
       </section>
@@ -343,6 +409,7 @@ export default async function TeamPage({
 
               <a
                 href="tel:+4598920099"
+                aria-label="Ring til os: 98 92 00 99"
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",

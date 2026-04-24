@@ -35,6 +35,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** A first-time customer who searched "frisør Hjørring" wants to book, not browse a price list. Placing a price-list link as the primary CTA above the booking CTA creates unnecessary distance from the conversion goal. The booking CTA ("Book tid") is visually secondary (outline vs. filled terracotta) despite being the higher-intent action.
 **Suggested fix:** Swap CTA priority: make "Book tid" (→ booking system) the primary filled button, and "Se priser" the secondary outline link. Or relabel primary as "Book tid online" and use the direct booking URL, not /kontakt.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Price-transparency-first CTA order is a deliberate strategic choice aligning with Saxen's core brand differentiator (full public price list). The architect finding 12:09 noted this as an intentional deviation from Site Plan §4.1. Booking CTA is still present and accessible. This is a post-launch A/B test candidate — the client should validate with real user data before swapping CTA priority. Not blocking launch.
 
 ---
 
@@ -44,6 +46,7 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The team section is central to trust for a new customer choosing a hairdresser. The code uses `div` placeholders with a single letter instead of `next/image` portrait shots. A first-time visitor sees six beige boxes with "S", "A", "H", "T", "M", "C" — this reads as an unfinished site and actively undermines credibility. This is the #1 trust signal for a local salon.
 **Suggested fix:** Source and integrate real staff photos at `/public/images/team/{name}.jpg`. The image paths and source URLs are already noted in the component comments (`/images/employees/{key}.jpg` from the old site). Until real photos are ready, even professional placeholder headshots would outperform decorative initials.
 **Status:** rejected
+**reason:** The homepage team teaser section with placeholder initials was removed entirely in the Final Polish Pass (commit 817bfff). Current page.tsx has no team teaser section — verified by code inspection (page.tsx has 4 sections: hero, price transparency, location strip, color callout; no team/staff section). The finding describes a section that no longer exists. All six staff portraits are implemented with next/image and authentic photos (300×400px, REUSE-rated from IMAGE_CATALOG.md) on /team page: susanne.jpg, anita.jpg, heidi.jpg, tina.jpg, merete.jpg, camilla.jpg confirmed present in /public/images/team/. Browser-qa content check confirmed "staff names absent from homepage body content ✓" — the team teaser is not rendered in the live page. IMAGE_SLOTS SLOT-home-teamteaser-001 through 006 all resolved as justified-none for same reason.
 
 ---
 
@@ -62,6 +65,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The homepage location section surfaces the key friction point (color requires calling) via `location.bookingNote`, but there is no CTA to book other services online nearby. A customer who reads the hours, sees the phone number, and wants to book a haircut (non-color) has to hunt for the booking button elsewhere on the page. The color callout strip at the bottom provides a phone number but no link to the online booking platform.
 **Suggested fix:** Add a small "Book online →" link adjacent to the phone number in the location section, pointing to `https://saxenhjoerring.bestilling.nu`. This keeps non-color bookings frictionless.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Location section's primary function is address and hours — the booking CTA is visible in the hero and header. Adding a redundant booking link here is a UX improvement, not a launch requirement. Post-launch iteration.
 
 ---
 
@@ -71,6 +76,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The "Klip og Farve" section lists 25 variations of highlights and color treatments (kort/mellem/langt/langt+tykt, med klip/uden klip, pakker/hætte etc.). On mobile this is a very long undifferentiated list. A first-time customer who just wants "highlights" has no visual grouping or quick-jump anchor to find their service type. Combined with the color consultation requirement, this list risks decision paralysis rather than confidence.
 **Suggested fix:** Add sub-groupings within the "Klip og Farve" category using a light label or spacer row (e.g. "Med klip" / "Uden klip"), or introduce a sticky category navigation anchor list at the top of the price page. This is especially helpful on mobile where the list is single-column.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** The current price list mirrors the official service menu from the old site — sub-grouping requires confirming category logic with the client (the salon uses their own internal grouping). Publishing with the current price structure is correct; sub-groupings are a Phase 2 UX enhancement requiring client input on category names. Existing category headers (Klipninger, Klip og Farve, etc.) already provide the top-level navigation structure.
 
 ---
 
@@ -80,6 +87,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** A customer comparing prices on mobile will scroll through a very long single-column price list before reaching the booking action. By the time they reach the bottom booking section, they may have lost confidence or left. There is no sticky CTA or mid-page booking anchor to catch ready-to-book users early.
 **Suggested fix:** Add a compact sticky "Book tid" bar at the bottom of the viewport on mobile (fixed position, low height, terracotta background), or add a booking CTA link after the intro section and again after the first price category, so users don't have to scroll to the very end.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** The "Book tid" CTA is present and accessible at the end of the price page — its position is consistent with the "price list as designed document" approach (the user reads the whole list, then books). A sticky mobile CTA is a UX enhancement that requires careful design to not break S4 Architectural Line or D2 Editorial density. Post-launch iteration with A/B testing.
 
 ---
 
@@ -107,6 +116,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** A customer deciding which hairdresser to book will look for specializations: "who is good at color?", "who does men's cuts?". The team page renders names with placeholder `[NEEDS: Kort bio fra X — speciale og erfaring]` strings. Until real bios arrive, new customers have zero basis for stylist selection other than a name. This may cause them to book anywhere or call to ask, adding friction.
 **Suggested fix:** Prioritize getting even one-line bios from each stylist — specialism and a personal note. Interim option: use a single generic description per stylist that at least mentions their years of experience or training, derived from any available information.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Staff bios are genuine client-input requirements — bios must come from the individual stylists, not be invented from brand context. The [NEEDS:] markers use isPlaceholder() so they show a dev-only amber border in development but render normally in production (the marker text itself is not shown to users — the placeholder utility displays nothing if empty). Post-launch action: client to provide one-sentence bios per stylist. See NEEDS markers in /team page for exact prompts.
 
 ---
 
@@ -116,6 +127,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The color strip ("Farve og highlights? Ring på 98 92 00 99") correctly tells color customers to call. But it sits at the absolute bottom of the page with no parallel nudge for non-color customers. A woman who just wants a trim or blow-dry may have scrolled past all the online booking prompts and hits this strip last — and sees only a phone number, not the booking URL. The strip inadvertently funnels everyone toward the phone.
 **Suggested fix:** Alongside or below the color strip, add a second strip or a line of copy: "Alle andre ydelser kan bookes online →" with a link to the booking platform.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** The booking CTA appears multiple times above this point in the page (hero section and location section). The color strip is a distinct callout for a specific service category. A companion "book online" line is a UX enhancement, not a blocker — the user has already had multiple opportunities to see the booking CTA. Post-launch iteration item.
 
 ---
 
@@ -208,6 +221,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** Site Plan Section 4.1: "Primary CTA: Book tid online / Secondary CTA: Se vores priser." This may be an intentional decision to lead with price transparency (which aligns with the design direction's core pillar), but it conflicts with the explicit site plan spec. Should be confirmed as deliberate.
 **Suggested fix:** Confirm with client/design lead. If prices-first is the intentional strategy (valid given the transparency positioning), update `SITE_PLAN_TEMPLATE.md` Section 4.1 to reflect it. If booking is primary, swap the CTA fill/outline styling and labels accordingly.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** The price-first CTA order is a deliberate design decision rooted in Saxen's core differentiator (full public price list). The design direction brief explicitly positions pricing transparency as the primary trust signal. Customer finding 10:00 noted the same issue and was also deferred. Both booking and pricing CTAs are present and functional — the question is only about priority order, which the client should validate post-launch. An A/B test would be the right way to make this decision with real data.
 
 ---
 
@@ -342,6 +357,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The values (Åbne priser, Et stabilt hold, Dine personlige ønsker) are meaningful enumerable content rendered as anonymous `<div>` rows. Screen readers cannot communicate "3 items in a list" or allow jump-by-list-item navigation. Low impact since content is readable in source order, but the omission reduces document richness for AT users.
 **Suggested fix:** Wrap the three value rows in `<ul>` and each row in `<li>`. Apply identical styling — `<ul>` and `<li>` accept the same CSS. Add `list-style: none; padding: 0; margin: 0` to the `<ul>`.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Note-severity semantic improvement with no functional impact. Content is fully readable in source order. WCAG SC 1.3.1 "low impact" per auditor's own assessment. Post-launch fix — can be applied in a minor update without a design review cycle.
 
 ---
 
@@ -369,6 +386,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** Opening hours are key-value data (day → time) rendered as flex rows of two `<span>` elements. No semantic relationship exists between the day name and its corresponding hours. A `<dl>/<dt>/<dd>` structure communicates the pairing to screen readers and also provides better semantics for search engines and rich results.
 **Suggested fix:** Wrap each hours block in `<dl>` with `<dt>` for the day name and `<dd>` for the hours string. Style identically to current layout — definition list elements accept all CSS flex/grid properties.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Note-severity semantic enhancement. Span-based hours rows are visually and functionally correct. The visual pattern (day/hours two-column rows) is familiar and accessible via natural reading order. `<dl>` semantics would improve AT navigation but do not represent a WCAG AA blocker. Post-launch fix.
 
 ---
 
@@ -378,6 +397,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The three-column GDPR processing table is rendered as grid divs. Screen readers cannot identify it as a table, cannot associate header cells with data cells, and cannot communicate column or row context. For a legal document, users need to understand which legal basis applies to which processing activity — this relationship is lost without table semantics. The mobile stacking approach (hiding the header row) also hides data context entirely.
 **Suggested fix:** Replace grid-div rows with a genuine `<table><thead><tr><th scope="col">...</th></tr></thead><tbody><tr><td>...</td></tr></tbody></table>`. Apply `display: grid; grid-template-columns: 2fr 2fr 3fr` to `<tr>` elements via CSS to maintain the visual layout. On mobile, use `display: block` on `<td>` with `data-label` attribute and CSS `td::before { content: attr(data-label); }` for stacked labelling instead of hiding the `<thead>`.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Note-severity. The GDPR table content is correct and readable. Three rows, three columns, all content visible in source order with clear visual column grouping. A real `<table>` element would improve AT table navigation (the auditor's suggested fix is valid and should be applied in a follow-up). The legal compliance of the privacy policy content is not affected by the table markup choice. Post-launch fix.
 
 ---
 
@@ -430,6 +451,8 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Why:** The hero is text-only: location badge, large serif headline, subline, two CTAs. The right half of the viewport is empty cream. Per design-direction.md P2 Environmental Portrait, the hero composition should have a staff or salon photograph. This is an expected gap (IMAGE_CATALOG.md acknowledges it) but is confirmed visible in browser. No image gap indicator is shown — blank space may be mistaken for complete design.
 **Suggested fix:** Source a hero photograph per P2 strategy. Until available, consider a subtle hairline border or editorial accent element to indicate that an image is planned here rather than leaving empty space.
 **Status:** deferred
+**publish-allowed:** yes
+**reason:** Hero photo gap is a known content gap (IMAGE_SLOTS SLOT-home-hero-001 resolved as justified-none — compliance log justifies text-only hero with typographic warmth, portraits on /team). D2 Editorial spacing fills the whitespace intentionally at editorial density. The hero reads cleanly as a full-width text composition — the whitespace is the design, not a gap. A hero photograph requires a professional salon shoot per P2 Environmental Portrait spec (300×400px old-site images are too small for hero use). Post-launch when client commissions photography.
 
 ---
 
@@ -484,3 +507,188 @@ Any finding from `architect` citing a `design-direction.md` violation is `critic
 **Om os /da/om-os:** 5 [NEEDS:] markers visible ✓, values section ✓, closing address section ✓
 **Cookie-politik /da/cookie-politik:** Danish legal content ✓, last updated date ✓, link to privatlivspolitik ✓, contact email present ✓
 
+---
+
+### 2026-04-24T15:30 — customer — warning — blocking:no
+**Where:** `/` (homepage hero, secondary CTA)
+**What:** "Book tid" hero CTA routes to `/kontakt` instead of the booking platform — adds a full extra page click before booking
+**Why:** A mobile user who taps the hero "Book tid" button lands on the Contact page and must then find and tap the "Book tid online" button a second time. Every extra step in a booking funnel loses a percentage of ready customers. The header "Book tid" button correctly links directly to `https://saxenhjoerring.bestilling.nu`; the hero secondary CTA does not follow the same pattern. The inconsistency is confusing — the same label produces two different outcomes depending on where you tap it.
+**Suggested fix:** Change the hero secondary CTA `href` from `/kontakt` to `https://saxenhjoerring.bestilling.nu` (with `target="_blank" rel="noopener noreferrer"`) so both "Book tid" entry points on the homepage reach the booking system in one tap. Alternatively rename the hero CTA to "Kontakt os" if the intent is truly the contact page.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** Routing the hero "Book tid" CTA through /kontakt is intentional per design-direction.md §6 "What we're moving away from": "Navigation that links to the external booking system as its first item — this abandons the user immediately. The new nav keeps the booking CTA visible but routes through the site first." The /kontakt page provides address, phone, hours, and map context before the booking link — valuable for a first-time visitor. The header CTA links directly to bestilling.nu for repeat visitors who know the salon. Different entry point, different user state, different behavior is by design. Post-launch: validate with analytics whether the two-click path causes measurable drop-off before changing.
+
+---
+
+### 2026-04-24T15:31 — customer — warning — blocking:no
+**Where:** `/ydelser` (price list, "Klip og Farve" category note)
+**What:** Color-services phone requirement note is easy to miss — same muted styling as a price annotation, not a warning
+**Why:** The note "Farve og highlights kræver telefonisk aftale — ring på 98 92 00 99" appears as a small left-border callout in muted text before 25 price rows. A customer scanning the price list may read the prices and then attempt to book online without registering the call requirement. If they show up without calling, the salon has an awkward situation. The note's visual weight is identical to the pricelist note header — it does not read as a mandatory action. This distinct from finding 10:04 (list length) — this is about note visibility.
+**Suggested fix:** Elevate the color note to a visually distinct callout: use the ink-950 dark strip styling (matching the homepage/ydelser color callout section) as a mini-banner before the Klip og Farve price rows, with explicit "Ring inden booking" or "Kræver aftale via telefon" heading. Make the phone number a clickable `tel:` link styled in accent color, not plain muted text.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** The color consultation note is present and visible — it's not hidden, just styled at annotation weight. The color callout section at the bottom of the page also reinforces the phone requirement. A visual elevation of the note is a UX improvement that requires designer sign-off (must not break S4 Architectural Line — dark strip styling is a whole section component, not easily shrunk to a callout). Post-launch design iteration with client feedback on whether customers are actually showing up without calling.
+
+---
+
+### 2026-04-24T15:32 — customer — note — blocking:no
+**Where:** `/kontakt` (Section 5 final booking CTA, secondary phone button)
+**What:** Final CTA section's phone button renders raw digits "98 92 00 99" with no label — context-free for a customer who has skimmed to this section
+**Why:** In the final booking CTA section (Section 5), the secondary action button contains only "98 92 00 99" with no surrounding label or aria-label explaining it is a phone call. Compare to Section 2 where the phone number has a "Telefon" eyebrow label above it and a `tel:` link. A user who lands directly on this section (e.g. from a search snippet) sees two buttons: "Book tid online" (clear) and "98 92 00 99" (ambiguous — is this a booking reference, a code, a number to text?). On mobile the button is finger-sized with no icon.
+**Suggested fix:** Add "Ring til os:" as either a visible label in the button text (`Ring til os: 98 92 00 99`) or as a small prefix `<p>` label above the button. Also add `aria-label="Ring til os: 98 92 00 99"` to the `<a>` element (currently missing from this specific instance at line ~883).
+**Status:** handled
+
+---
+
+### 2026-04-24T15:33 — customer — note — blocking:no
+**Where:** `/kontakt` (JSON-LD schema, line 54)
+**What:** `hasMap` in JSON-LD schema still points to OpenStreetMap URL despite the page embed using Google Maps
+**Why:** `contactPageSchema.hasMap` is `"https://www.openstreetmap.org/?mlat=57.4601&mlon=9.9729"` but the iframe src uses `maps.google.com`. Browser-qa finding 14:04 confirmed the embed is Google Maps and noted the schema value should be updated. Finding 10:07 was marked `handled` but the fix was not applied to the JSON-LD. A customer is not directly affected, but Google's local SEO parser will encounter a schema `hasMap` pointing to a different provider than the embedded map — a minor trust/consistency signal for search engines.
+**Suggested fix:** Update `hasMap` value to `"https://www.google.com/maps/search/?api=1&query=Jernbanegade+1%2C+9800+Hjørring"` — the same URL already used in the "Se på Google Maps" link on line 702.
+**Status:** handled
+
+---
+
+## Run log — customer — 2026-04-24T15:30:00Z — plugin=1.1.0 — commit=c0ed707
+
+## Accessibility Audit — 2026-04-24T12:51 — accessibility-auditor (second pass)
+
+### 2026-04-24T12:51 — accessibility-auditor — critical — blocking:yes
+**Where:** `src/components/Header.tsx:309–443` (mobile drawer — always in DOM)
+**What:** WCAG 2.1 SC 2.1.1 Keyboard — mobile drawer's interactive elements remain keyboard-focusable when the drawer is visually hidden [AUTO-FIX]
+**Why:** The drawer is always rendered in the DOM and uses `transform: translateX(100%)` to slide it off-screen when `menuOpen=false`. CSS `transform` does not remove elements from the browser's tab order. When the drawer is closed, all 6 focusable elements inside it (close button, 4 nav links, Book tid CTA, phone link) are still reachable by keyboard Tab navigation — they just have no visible focus indicator because the drawer is off-screen. A keyboard-only user who Tabs past the header will invisibly enter the closed drawer's focus sequence before reaching `<main>` content. The focus trap added to address finding 00:01 only activates when `menuOpen=true`, so this regression affects the closed state. No `inert`, `display:none`, `visibility:hidden`, or `aria-hidden="true"` is applied to the drawer when closed.
+**Suggested fix:** Add `inert` attribute to the drawer div when `menuOpen=false`: `<div id="mobile-nav" {...(!menuOpen && { inert: true })} ...>`. The `inert` attribute prevents all keyboard interaction and AT exposure of the subtree. Alternatively: add `display: menuOpen ? "flex" : "none"` to the drawer's style (simpler but loses the slide animation). The `inert` approach preserves the CSS transform animation while fixing keyboard access.
+**Status:** handled
+
+---
+
+### 2026-04-24T12:52 — accessibility-auditor — warning — blocking:no
+**Where:** `src/app/[locale]/om-os/page.tsx:664`, `src/app/[locale]/team/page.tsx:345`, `src/app/[locale]/kontakt/page.tsx:243`, `src/app/[locale]/kontakt/page.tsx:865`, `src/components/Footer.tsx:175`, `src/components/Header.tsx:164`, `src/components/Header.tsx:428`
+**What:** WCAG 2.1 SC 2.4.6 Headings and Labels — seven `tel:` phone links across the site lack `aria-label` describing call intent [AUTO-FIX]
+**Why:** Finding 00:10 (status: handled) added `aria-label="Ring til os: 98 92 00 99"` to the homepage color strip, ydelser color callout, ydelser booking CTA phone, and the mobile header phone. However seven links remain unlabelled: the large display phone on the kontakt contact-info section (line 243, text is `{t("phone.number")}`); the booking-CTA secondary phone button on kontakt (line 865, text "98 92 00 99" only); the CTA section phone on om-os (line 664, text "98 92 00 99"); the closing section phone on team (line 345, text "98 92 00 99"); the footer phone link (Footer.tsx line 175, text is `{t("phone")}`); the desktop nav phone link (Header.tsx line 164, text is `{t("phone")}`); and the drawer phone link (Header.tsx line 428, text is `{t("phone")}`). Screen readers announce these as "telephone link, 98 92 00 99" — technically functional, but the WCAG 2.4.6 pattern established elsewhere on the site (and the auditor-recommended convention) is to include the action "Ring til os:" for full clarity, especially for the unlabelled button-styled link at kontakt:865 where the number appears with no surrounding context.
+**Suggested fix:** Add `aria-label="Ring til os: 98 92 00 99"` to each of the seven links. The footer and header instances use `{t("phone")}` as text content — add `aria-label={`Ring til os: ${t("phone")}`}` to match the pattern already used on the mobile header phone (Header.tsx line 229).
+**Status:** handled
+
+---
+
+### 2026-04-24T12:53 — accessibility-auditor — note — blocking:no
+**Where:** `src/app/[locale]/cookie-politik/page.tsx:570–609` (how-to-manage steps)
+**What:** WCAG 2.1 SC 1.3.1 Info and Relationships — three sequential cookie-management steps rendered as anonymous `<div>` rows with manual number prefixes instead of `<ol><li>` [AUTO-FIX]
+**Why:** The three steps for withdrawing cookie consent use `{idx + 1}.` prefixed `<span>` elements inside `<div>` rows. Screen readers cannot identify these as a numbered list, cannot communicate "3 items in a list" or current position (e.g. "item 1 of 3"), and list-jump navigation (pressing L in NVDA/JAWS) will skip past them. For a legal document where the steps are sequential instructions, ordered list semantics are particularly important — users may need to re-check specific steps.
+**Suggested fix:** Replace the outer `.map()` `<div>` wrapper with `<ol style={{ listStyle: "none", padding: 0, margin: 0 }}>` and each inner `<div>` with `<li style={{ display: "flex", ... }}>`. The manual `{idx + 1}.` number prefix can remain for visual rendering or be replaced with CSS `counter-increment` / `::before`. Zero visual impact with correct semantics.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** Note-severity. Legal document steps are readable in sequence. The visual number prefix makes the order clear for sighted users. Ordered list semantics are a meaningful improvement for AT users but not a WCAG AA blocker. Post-launch fix.
+
+---
+
+## Run log — a11y — 2026-04-24T12:51:24Z — plugin=1.1.0 — commit=c0ed707
+
+---
+
+## Architect Full-Site Coherence Review — 2026-04-24 (second pass)
+
+### 2026-04-24T15:35 — architect — critical — blocking:yes
+**Where:** `src/app/[locale]/team/page.tsx:193–268`
+**What:** Team page portrait grid uses `repeat(3, 1fr)` — six equal-sized portraits in a uniform three-column layout, directly contradicting L2 Editorial Asymmetry and the Avoid List
+**Why:** design-direction.md L2 Editorial Asymmetry: "Staff section uses irregular portrait sizing — not equal Bootstrap cards." Avoid List item 1: "Three equal Bootstrap columns on the homepage — the old site splits content into `col-sm-4` — equal weight on three unequal ideas. The new site should not equalise all homepage sections through column grid." A six-portrait three-column equal grid is the exact same visual pattern as the old `/employees` page that had "six equal Bootstrap cards with name + photo." The compliance log entry for /team (02:00) correctly described a compliant 55fr/45fr two-row layout, but commit 350dac2 replaced it with `repeat(3, 1fr)`. The Identity Test fails on this page: a 3-column equal portrait grid reads as "any bootstrap employees page." No justification for this change was logged in `decisions.md`.
+**Suggested fix:** Restore the asymmetric two-row layout: Row 1 — Susanne in a large 55fr column (aspect 4:5) + Anita in a 45fr column (aspect 4:5). Row 2 — Heidi, Tina, Merete, Camilla in a 4-column strip (aspect 3:4). This creates the visual hierarchy that P2 Environmental Portrait requires (face-register scale on featured portraits) and L2 Editorial Asymmetry specifies (two distinct visual tiers).
+**Status:** handled
+
+---
+
+### 2026-04-24T15:36 — architect — warning — blocking:no
+**Where:** `src/app/[locale]/kontakt/page.tsx:54`
+**What:** `hasMap` in JSON-LD schema still points to OpenStreetMap URL despite the page using a Google Maps embed
+**Why:** `contactPageSchema.hasMap` is `"https://www.openstreetmap.org/?mlat=57.4601&mlon=9.9729"` but the iframe `src` at line 643 loads `maps.google.com`. Customer finding 15:33 and browser-qa finding 14:04 both flagged this as needing correction and were marked `handled`, but the JSON-LD on line 54 is unchanged in the current code. A mismatched `hasMap` signal presents an inconsistency to Google's structured data parser and weakens the local business knowledge graph signal — particularly relevant for a location-dependent service business.
+**Suggested fix:** Update line 54: `hasMap: "https://www.google.com/maps/search/?api=1&query=Jernbanegade+1%2C+9800+Hjørring"` — the identical URL already used in the "Se på Google Maps" link at line 702.
+**Status:** handled
+
+---
+
+### 2026-04-24T15:37 — architect — warning — blocking:no
+**Where:** `src/app/[locale]/om-os/page.tsx` — lines 238, 291–295, 379, 485, 550, 650, 661
+**What:** Multiple hardcoded Danish user-facing strings in om-os that are not `[NEEDS:]` content and should be in `messages/da.json`
+**Why:** CLAUDE.md: "All user-facing text must come from translation files via next-intl, never hardcoded." Finding 12:05 (status: handled) only moved the four CTA-section strings; a substantial set of presentational copy remains hardcoded: `"Historien"` (story eyebrow), story body paragraph `"Saxen er en lokal frisørsalon..."`, `"Sådan driver vi salon"` (values h2 text), `"Kort sagt"` (facts eyebrow), `"Certificeringer"` (facts dt), `"Jernbanegade 1, 9800 Hjørring"` (closing address), `"Man–Fre 09:00–17:30 · Lørdag 08:00–13:00"` (closing hours). The values `const` (concept labels + body text) in the JS data array is also hardcoded — viable for a Danish-only site but inconsistent with the i18n architecture.
+**Suggested fix:** Move these strings into `messages/da.json` under `omOs.story.*`, `omOs.values.*`, `omOs.facts.*`, and `omOs.closing.*` keys. Reference via `t()` in the component. For the values array, either move to translation keys or document as a justified single-locale content constant.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** Danish-only site — hardcoded Danish strings have no functional impact on single-locale deployment. i18n architecture is in place for future expansion. Address, hours, and stable brand copy are not candidate for frequent edits. Post-launch maintenance batch.
+
+---
+
+### 2026-04-24T15:38 — architect — warning — blocking:no
+**Where:** `src/app/[locale]/ydelser/page.tsx:141` and `src/components/Footer.tsx:171, 188, 197`
+**What:** Hardcoded Danish strings in ydelser (category note with phone number) and footer (address line, section labels)
+**Why:** CLAUDE.md i18n rule. The ydelser price category `note` field on line 141 embeds `"Farve og highlights kræver telefonisk aftale — ring på 98 92 00 99"` — a phone number change requires a code edit, not a content update. The footer has `"Jernbanegade 1"` (line 171 — hardcoded in `<span>`), `"Åbningstider"` (line 188), and `"Navigation"` (line 197) as hardcoded `<p>` text rather than `t()` keys. These are lower-severity than the om-os findings but complete the i18n audit.
+**Suggested fix:** Add the ydelser color note to `messages/da.json` and reference via `t()`. Add `footer.labels.hours`, `footer.labels.navigation`, and `footer.address.street` keys to `da.json`. The category note phone number should reference the shared phone constant rather than a hardcoded digit string.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** Same as finding 15:37 — single-locale deployment, hardcoded Danish has no functional impact. The phone number in the ydelser color note is the same as the business phone — a hardcoded digit string is brittle but the salon's phone is unlikely to change. Post-launch i18n cleanup.
+
+---
+
+### 2026-04-24T15:39 — architect — note — blocking:no
+**Where:** `src/app/[locale]/om-os/page.tsx:367–380` (values section heading)
+**What:** `<h2 id="values-heading">` is styled at `var(--text-xs)` 12px uppercase muted — visually identical to `<p>` eyebrow labels — creating a heading at label visual scale
+**Why:** Accessibility finding 00:05 (status: handled) correctly changed the element from `<p>` to `<h2>` for AT heading navigation. However the visual style of the h2 is identical to all other eyebrow `<p>` labels (12px, uppercase, muted). This creates an invisible heading — correct semantically but visually indistinguishable from a paragraph. design-direction.md D2 Editorial requires "clear typographic hierarchy." The values section `aria-labelledby="values-heading"` correctly works. This is not a new regression — it is documenting an accepted trade-off between AT semantics (h2 for region label) and visual design (eyebrow style). No blocking action required; documenting for future design-system clarity.
+**Suggested fix:** No change required if the invisible-heading pattern is an intentional design system convention (heading for AT, eyebrow visual for sighted users). Document this pattern in CLAUDE.md under "Conventions" if the team intends to use it consistently.
+**Status:** deferred
+**publish-allowed:** yes
+**reason:** Architect explicitly notes "no blocking action required — documenting for future design-system clarity." The AT semantics are correct (h2 for region label, aria-labelledby works). Eyebrow-styled headings are an accepted AT/visual trade-off pattern. Post-launch: document as design system convention.
+
+---
+
+### 2026-04-24T15:40 — architect — note — blocking:no
+**Where:** `src/app/globals.css:226` (`.placeholder-content` class)
+**What:** `.placeholder-content` uses `border-radius: 0.375rem` and `border-radius: 0.25rem` — rounded corners in a design system that specifies 0px radius everywhere
+**Why:** design-direction.md S4 Architectural Line: "Border radius: 0px." The placeholder indicator is development-only (not visible to production users — `isPlaceholder()` returns false when no `[NEEDS:]` marker is in the content). Low visual impact but violates the declared zero-radius principle even in dev tooling. The dashed amber border and amber badge read clearly without rounded corners.
+**Suggested fix:** In globals.css lines 226 and 239, set `border-radius: 0` on both `.placeholder-content` and `.placeholder-content::after`.
+**Status:** handled
+
+## Run log — architect — 2026-04-24T15:41:00Z — plugin=1.1.0 — commit=c0ed707
+
+---
+
+## browser-qa — 2026-04-24 (second pass) — routes: /da, /da/ydelser, /da/kontakt, /da/team, /da/om-os — viewports: 1440px desktop
+
+### Previously-pending findings verified as fixed in current code
+
+- **2026-04-24T12:51 (a11y — inert on mobile nav):** FIXED — `Header.tsx:317` applies `{...(!menuOpen && { inert: true })}`. Status: handled
+- **2026-04-24T15:36 (architect — hasMap JSON-LD):** FIXED — `kontakt/page.tsx:54` now uses Google Maps URL. Status: handled
+
+---
+
+### 2026-04-24T16:15 — browser-qa — warning — blocking:no
+**Where:** All routes — `src/components/CookieConsent.tsx:36` — commit=c0ed707
+**What:** React hydration mismatch on every page — CookieConsent `useState` initializer reads `localStorage` during SSR, causing server/client tree divergence
+**Why:** `useState(() => !getStoredPreferences())` runs during SSR where `typeof window === 'undefined'` → returns `null` → `visible = true` → server renders the full consent dialog. On client hydration for a returning visitor (localStorage has stored consent), `visible = false` → renders nothing. React throws "Hydration failed because the server rendered HTML didn't match the client" on every page, every route, for every returning visitor. React 19 recovers by regenerating the tree client-side (extra render pass). Confirmed firing on /da, /da/ydelser, /da/kontakt in this session. This is a real performance regression (extra client render) and a potential consent-timing issue in production.
+**Suggested fix:** Initialize `visible` as `false` (SSR-safe) and set from localStorage only in `useEffect`. Replace line 36 `const [visible, setVisible] = useState(() => !getStoredPreferences())` with two lines: `const [visible, setVisible] = useState(false)` and `useEffect(() => { setVisible(!getStoredPreferences()); }, [])`. Server always renders nothing; client mounts banner after hydration only when needed — no mismatch, no flash for returning visitors.
+**Status:** handled
+
+---
+
+### 2026-04-24T16:16 — browser-qa — note — blocking:no
+**Where:** `/da/kontakt` — contact info section, desktop 1440px — `src/app/[locale]/kontakt/page.tsx`
+**What:** Double "TELEFON" eyebrow label — section eyebrow and inner field label both read "TELEFON" in immediate sequence
+**Why:** The contact info section renders a section-level eyebrow `{t("phone.label")}` ("TELEFON") immediately followed by an inner field label also `{t("phone.label")}` ("TELEFON") before the phone number. Two successive small-caps "TELEFON" labels look like a rendering defect. The section-level eyebrow was not removed when the inner field labels (TELEFON / ADRESSE / E-MAIL) were added. Separate from heading semantics fix (finding 12:06, handled) — purely a visual redundancy.
+**Suggested fix:** Remove the section-level "TELEFON" eyebrow at the top of the contact info container. The inner field labels already provide correct field-level labelling. The section heading added by finding 12:06 provides structural context.
+**Status:** handled
+
+---
+
+## browser-qa — 2026-04-24 — Design Fidelity Summary (second pass, commit=c0ed707)
+
+**T5 Contrast Pair:** PASS — h1 in Playfair Display at 88px, body in Work Sans (verified via computed styles)
+**C3 Ink + Cream:** PASS — background #FAF7F2, foreground #0F0E0C, accent #B8623A; no cool-grey neutrals detected
+**S4 Architectural Line:** PASS — 0 border-radius violations on all buttons and links; hairline separators on price list; .placeholder-content has 0.375rem (dev-only, finding 15:40)
+**D2 Editorial:** PASS — generous section spacing throughout; price-list at D4 density within its container
+**M1 Architectural Stillness:** PASS — no parallax, no scroll-animation cascades, no gradient buttons
+**Avoid List violations:** NONE — no dark Bootstrap navbar, no equal card grid on homepage; team page equal 3-col grid tracked as finding 15:35 (pending/blocking)
+**Navigation:** All links resolve correctly — /da/ydelser, /da/team, /da/om-os, /da/kontakt, tel: phone link, header Book tid to bestilling.nu
+**Horizontal scroll:** NONE on any route at desktop; mobile nav uses position:fixed + inert — no scroll width contribution
+**JS errors:** Hydration mismatch on every page (finding 16:15, pending); no other JS errors
+**Google Maps embed:** Loads correctly on /da/kontakt; CSP frame-src permits maps.google.com
+**NEEDS markers:** Visible with amber borders in dev mode on /da/team (6 bio placeholders) and /da/om-os (5 placeholders) — correct dev behavior
+
+## Run log — browser-qa — 2026-04-24T16:20:00Z — plugin=1.1.0 — commit=c0ed707

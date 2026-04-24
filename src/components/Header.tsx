@@ -162,6 +162,7 @@ export function Header() {
             {/* Phone — visible desktop */}
             <a
               href={`tel:+4598920099`}
+              aria-label={`Ring til os: ${t("phone")}`}
               className="saxen-phone-link"
               style={{
                 fontFamily: "var(--font-body)",
@@ -313,6 +314,7 @@ export function Header() {
         role="dialog"
         aria-modal="true"
         aria-label="Navigation"
+        {...(!menuOpen && { inert: true })}
         style={{
           position: "fixed",
           top: 0,
@@ -426,6 +428,7 @@ export function Header() {
           {/* Phone in drawer */}
           <a
             href="tel:+4598920099"
+            aria-label={`Ring til os: ${t("phone")}`}
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "var(--text-sm)",

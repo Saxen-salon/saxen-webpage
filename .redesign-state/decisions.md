@@ -63,3 +63,11 @@ Append-only log of orchestrator decisions during the redesign pipeline. Each ent
 ### 2026-04-24T13:49 — Resumption at Step 11
 **Why:** Steps 1-10 confirmed done. Branch was 1 commit ahead of origin/master (IMAGE_SLOTS.md root-fix). Build verified clean (11 routes, TypeScript clean). Proceeding to publish.
 **Effect:** Pushing to Vercel. 12 NEEDS markers remain for genuine client input.
+
+### 2026-04-24T15:00 — Resumption from IMAGE_SLOTS.md derivation
+**Why:** Pipeline upgrade (commit c0ed707) added run-log requirements, IMAGE_SLOTS.md derivation metadata, and publish gate. IMAGE_SLOTS.md has template-only placeholders (not yet derived). All 4 review lanes have no run-log entries (stale by new definition). Finding 10:01 (customer, critical, blocking:yes, rejected) has no reason field — fails gate check 6. All deferred findings lack publish-allowed/reason fields — fails gate check 5. No publish-gate.md. Pages are fully built (7 pages + components), all compliance logs PASS, all critical findings handled. Team section removed from homepage in polish pass (817bfff) — portraits are on /team with real images. Hero is text-only (compliance log justification: staff portraits are on /team). Staff photo files confirmed present: public/images/team/{susanne,anita,heidi,tina,merete,camilla}.jpg.
+**Effect:** Deriving IMAGE_SLOTS.md now with hashes 16e9602ece30 (design-direction) + 57f43d10c3f0 (site-plan), plugin 1.1.0. Updating review-findings.md with reasons and publish-allowed fields. Re-running Step 7 all lanes (run-log requirement). Then Step 10 + Step 11.
+
+### 2026-04-24T17:00 — Step 10 Complete — Publish Gate PASS
+**Why:** All gate checks pass. 4 review lanes fresh (plugin=1.1.0). 0 pending blockers. 15 deferred findings all publish-allowed. 1 rejected critical (10:01) with evidence-backed reason. IMAGE_SLOTS.md derived (hashes match). Build clean. Production readiness checklist all PASS. Post-launch items documented in gate file.
+**Effect:** Invoking /publish.

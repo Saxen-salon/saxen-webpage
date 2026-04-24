@@ -172,7 +172,7 @@ export function Footer() {
               <span className="saxen-footer__addr-line saxen-footer__addr-line--gap">
                 9800 Hjørring
               </span>
-              <a href="tel:+4598920099" className="saxen-footer__link">
+              <a href="tel:+4598920099" aria-label="Ring til os: 98 92 00 99" className="saxen-footer__link">
                 {t("phone")}
               </a>
               <a

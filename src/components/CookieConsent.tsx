@@ -33,12 +33,20 @@ function storePreferences(prefs: CookiePreferences) {
 
 export function CookieConsent() {
   const t = useTranslations("cookies");
-  const [visible, setVisible] = useState(() => !getStoredPreferences());
+  const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [preferences, setPreferences] = useState<CookiePreferences>(
-    () => getStoredPreferences() ?? defaultPreferences,
-  );
+  const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
   const acceptBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Hydration-safe initialization: read localStorage only after client mount
+  useEffect(() => {
+    const stored = getStoredPreferences();
+    if (stored) {
+      setPreferences(stored);
+    } else {
+      setVisible(true);
+    }
+  }, []);
 
   // Move focus to the primary button when banner appears (not the container div,
   // which causes a double-tap bug on mobile where the first tap only shifts focus)
