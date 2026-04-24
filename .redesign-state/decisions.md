@@ -46,6 +46,8 @@ Append-only log of orchestrator decisions during the redesign pipeline. Each ent
 **Why:** Header, Footer, ConsentGate, CookieConsent restyled all pass. Build succeeds. Revision pass: T5 at nav scale works (Playfair wordmark at 1.625rem). S4 flat buttons hold. No strategy swaps needed. Brief frozen.
 **Effect:** All Phase 1+ pages build against frozen brief. No further direction changes permitted.
 
+### 2026-04-24T05:00 — browser-qa run — commit e9692d6 — scope: 5 routes × 2 viewports × 1 locale — findings: 1 critical / 1 warning / 4 notes — critical fixed immediately (header inline style override)
+
 ### 2026-04-24T04:00 — Steps 7–10 Complete — Review, content audit, SEO, production readiness
 **Why:** Architect found 3 critical issues (sitemap wrong routes, error/loading/not-found broke design system, CSP missing frame-src). A11y found 3 critical issues (focus trap, Escape key, cookie consent focus). Color contrast failures fixed (--color-muted darkened to ink-600, CTA buttons moved to accent-600). All critical fixes applied, build passes.
 **Effect:** Site is production-ready. 8 NEEDS markers remain for genuine client input (staff bios x6, CVR, founding story, owner confirmation, certifications). Proceeding to publish.
