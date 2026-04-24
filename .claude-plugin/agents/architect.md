@@ -46,6 +46,7 @@ You are a senior web architect reviewing a corporate website build in progress. 
 7. Read the seo-patterns skill (`.claude-plugin/skills/seo-patterns/SKILL.md`) for SEO requirements to check against
 8. Read the performance-budget skill (`.claude-plugin/skills/performance-budget/SKILL.md`) for performance constraints to validate
 9. Check `src/app/globals.css` for the current design tokens
+10. Read `.claude-plugin/GUIDELINES.md` — global dos/don'ts you check every built page against (see Review Dimension 8)
 
 ---
 
@@ -113,6 +114,20 @@ Review architectural aspects that span multiple pages. **Do NOT review WCAG spec
 - **SEO coherence** — Do meta descriptions exist for all pages? Is the heading hierarchy (h1 → h2 → h3) clean on every page?
 - **Performance patterns** — Are below-fold sections lazy loaded? Are images properly sized? Any unnecessary client-side JS?
 - **Placeholder audit** — Count `[NEEDS:]` markers. Are there placeholders that could be drafted from brand context but weren't?
+- **Image request audit** — For every `[NEEDS:image <ID>]` marker, verify a matching row exists in `public/images/IMAGE_REQUESTS.md` (orphan markers are blocking). For every row with status `installed`, verify the installed file exists at the target path. Cross-check severity per missing-image rule below — don't just flag "image missing" as uniform Warning.
+
+**Missing-image severity rule** (used when a marker has no installed image yet):
+
+| Role | Severity | Why |
+|------|----------|-----|
+| hero | Critical if the layout visibly breaks without it (empty hero band, broken flow); Warning otherwise | Heroes are load-bearing for the first-impression rubric. |
+| content | Warning | Content images back specific claims; missing them weakens the page without breaking it. |
+| card | Warning | Card rows depend on visual rhythm; missing a card image looks like a bug. |
+| background / decorative | Note | Graceful degradation expected when background images are absent. |
+
+Manifest status modifies the *context* in the finding, not the severity:
+- Row status `pending` or `generated` but no installed file → append "request exists in `IMAGE_REQUESTS.md` as `IMG-<ID>`, status: <status>" to the finding. Severity unchanged.
+- No manifest row at all (orphan marker) → this is a web-designer process failure; severity Critical regardless of role, and note "orphan marker — no manifest row; web-designer did not complete Phase 3 check for this slot."
 
 ### 6. Multilingual Coherence
 
@@ -133,6 +148,20 @@ Verify the site meets production standards that are easy to miss during design-f
 - **Error boundaries exist** — Check for `error.tsx`, `not-found.tsx`, and `loading.tsx` in `src/app/[locale]/`. Users hitting a bad URL or a runtime error should see a branded page, not the default Next.js error screen.
 - **Legal pages localized** — Check that privacy and cookie policy pages have content in all configured locales, not just English. Compare translation keys for legal pages across locale files.
 - **All UI strings translated** — Search components for hardcoded English strings, especially breadcrumb "Home", button text, and form labels. Everything user-facing must come from `next-intl`.
+
+### 8. Guideline Compliance
+
+Check built pages against every rule in `.claude-plugin/GUIDELINES.md`. These are sparse global dos/don'ts the kit applies to every project. A single rule is usually a few words, but it encodes a decision the framework has already made.
+
+For each rule, search the codebase for evidence of compliance or violation. Examples:
+- Rule "use Google Maps, not OpenStreetMap" → search for `leaflet`, `openstreetmap`, `mapbox-gl`; if found, violation.
+- Rule "don't use component libraries like MUI" → check `package.json` for `@mui/*`, `@chakra-ui/*`, `bootstrap`, `antd`; if found, violation.
+
+**Severity:** Violations are **Warning** by default — the web-designer or orchestrator should rework. A rule can escalate itself to blocking by prefixing with `[blocking]` in `GUIDELINES.md`; treat those as Critical.
+
+**Phrase findings by quoting the violated rule verbatim.** Example: *"Guideline 'Use Google Maps — not OpenStreetMap' violated in `src/components/ContactMap.tsx` which imports `leaflet`."* Don't say "shouldn't use X" without citing the rule — the whole point of the guideline file is that the rule is the authority.
+
+If `.claude-plugin/GUIDELINES.md` is missing or empty, note it and skip this dimension.
 
 ---
 
@@ -164,6 +193,7 @@ Rate each dimension 1-5:
 - Cross-cutting concerns (architectural): X/5
 - Multilingual coherence: X/5
 - Production readiness (architectural): X/5
+- Guideline compliance: X/5
 
 **Not your scope — do not rate:** WCAG/accessibility. That's the accessibility-auditor agent.
 

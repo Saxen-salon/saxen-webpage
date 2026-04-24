@@ -332,6 +332,9 @@ Without this step, the web-designer agent invents visual choices page-by-page. C
 **Tools needed:** Read, Write, Edit, Grep, Glob, Bash, WebSearch, WebFetch.
 
 #### Inputs (read by web-designer before each page)
+- **`.claude-plugin/GUIDELINES.md`** — sparse global dos/don'ts applied to every page (e.g., "use Google Maps, not OSM"). Read first, kept in mind across every choice below.
+- **`public/images/IMAGE_REQUESTS.md`** — open manifest rows for this route (avoid duplicates) and reference IDs for any existing slot
+- **`.claude-plugin/skills/media-prompting/SKILL.md`** — read when drafting a new image-request row; defines the schema and P-strategy → prompt-language mapping
 - `company-brand/SKILL.md` — who this company is
 - **`design-direction.md`** — the committed visual language (binding)
 - `design-system/SKILL.md` — tokens executing the direction
@@ -386,8 +389,8 @@ The web-designer loads many documents. To avoid overwhelming its context window,
 3. **Build** — Uses the `/frontend-design` skill for UI implementation, passing it the **direction brief** (selected strategies + attribute→visual table + Avoid list + identity test), design tokens, content requirements, and the subset of available images the brief permits. This is the primary code generation tool — it produces distinctive components *when fed the brief*, generic ones when fed only brand attributes.
 4. **Integrate** — Reviews `/frontend-design` output to ensure it follows design-system tokens, seo-patterns, and conversion guidance. Adds JSON-LD schema, metadata, translations.
 5. Writes translations for ALL configured locales
-6. Uses `[NEEDS:]` markers only for genuinely missing client content
-7. **Pre-finish brief-compliance self-check** — before marking the page done, state pass/fail against each selected strategy (T/C/L/P/S/D/M), the direction brief's Avoid list, and the one-line identity test. On any fail, quote the violated brief item and either rework or explicitly justify the deviation. This catches drift at the cheapest moment to fix.
+6. Uses `[NEEDS:]` markers only for genuinely missing client content. **For images specifically**, uses the pointer form `[NEEDS:image <IMG-ID>]` and writes a matching row in `public/images/IMAGE_REQUESTS.md` — the manifest is the single source of truth, the marker is a pointer.
+7. **Pre-finish brief-compliance self-check** — before marking the page done, state pass/fail against each selected strategy (T/C/L/P/S/D/M), the direction brief's Avoid list, the one-line identity test, AND every `[NEEDS:image …]` marker having a matching manifest row. On any fail, quote the violated brief item and either rework or explicitly justify the deviation. This catches drift at the cheapest moment to fix.
 
 #### Outputs
 - Page files in `src/app/[locale]/`
@@ -413,9 +416,17 @@ After each phase completes, the orchestrator tells the user what was built (one 
 
 | Agent | Loop Command | Focus | Tools |
 |-------|-------------|-------|-------|
-| `architect` (magenta) | `/loop 15m /review-architect` | **Design distinctiveness (blocking)**, design consistency, plan adherence, technical quality, component reuse, multilingual coherence, production readiness | Read, Grep, Glob |
+| `architect` (magenta) | `/loop 15m /review-architect` | **Design distinctiveness (blocking)**, design consistency, plan adherence, technical quality, component reuse, multilingual coherence, production readiness, guideline compliance (`.claude-plugin/GUIDELINES.md`), image-request audit | Read, Grep, Glob |
 | `customer-perspective` (yellow) | `/loop 15m /review-customer` | 3 buyer personas evaluate content, messaging, conversion friction | Read, Grep, Glob, WebFetch, WebSearch |
 | `accessibility-auditor` | `/loop 15m /review-a11y` | Semantic HTML, contrast, keyboard nav, ARIA, focus management, motion | Read, Grep, Glob |
+
+**Phase-gated (NOT looped):**
+
+| Agent | Command | Focus | Tools |
+|-------|---------|-------|-------|
+| `browser-qa` (red) | `/review-browser` | Rendered behavior in a real browser (nav, forms, language switcher, responsive), rendered fidelity to `design-direction.md` (fonts actually loaded, accent color as accent vs field, committed P-strategy visible), visual-gap identification with disposition continuity | Read, Grep, Glob, Bash, Chrome MCP |
+
+`browser-qa` is **phase-gated**, not time-looped. Invoke it after Phase 0 shell completion, after each completed Phase 1 core page, at the end of each build phase, and during the final review pass. Running it on a `/loop` cadence would catch half-built UI and HMR churn — noise that damages the signal. It requires a running local dev server (`npm run dev` on `localhost:3000`); if the server is not up, the command reports and exits.
 
 **Design Distinctiveness is blocking.** The architect's first review dimension checks whether built pages execute `design-direction.md` (selected strategies, attribute→visual translation, Avoid list, identity test) or have drifted toward generic AI defaults. Violations are Critical severity, not Warning — "looks generic" blocks progress on this pipeline. This rubric exists because consistency alone doesn't catch blandness (a site can be consistently generic); distinctiveness catches that specific failure mode.
 
@@ -554,6 +565,7 @@ Once all checks pass (fixing issues as they're found), proceed directly to Step 
 | `performance-budget` | Core Web Vitals targets, image rules, font loading, bundle size limits | `web-designer`, Production Readiness (Step 10) | Step 6 (during build) + Step 10 (validation) |
 | `analytics-tracking` | Event tracking patterns, cookie consent integration, Search Console continuity | `web-designer`, Production Readiness (Step 10) | Step 6 (during build) + Step 10 (validation) |
 | `legal-compliance` | Cookie consent implementation, GDPR form handling, privacy policy requirements, accessibility statements | `web-designer` | Step 6 Phase 3 (legal pages) |
+| `media-prompting` | Image-generation prompt patterns — row schema for `IMAGE_REQUESTS.md`, P-strategy → prompt language mapping (P1–P8), aspect/focal conventions per role, negative-prompt patterns to suppress AI stock-photo sheen | `web-designer`, `/generate-media-prompts` | Step 6 (during build) |
 
 ---
 
@@ -570,6 +582,7 @@ Once all checks pass (fixing issues as they're found), proceed directly to Step 
 | `architect` | magenta | Reviews distinctiveness, consistency, plan adherence, architectural cross-cutting (read-only) | Read, Grep, Glob | 7 |
 | `customer-perspective` | yellow | Evaluates from buyer personas (read-only) | Read, Grep, Glob | 7 |
 | `accessibility-auditor` | orange | Deep a11y review: WCAG 2.1 AA — semantic HTML, contrast, keyboard nav, ARIA, focus, motion | Read, Grep, Glob | 7 (loop + final) |
+| `browser-qa` | red | Rendered QA in a real Chromium via Chrome MCP — rendered behavior, rendered fidelity to `design-direction.md`, visual-gap identification. Phase-gated (Phase 0 complete, each Phase 1 core page, phase boundaries, final review). Requires `npm run dev` running locally. | Read, Grep, Glob, Bash, Chrome MCP | 7 (phase-gated, NOT /loop) |
 
 ---
 
@@ -582,6 +595,9 @@ Once all checks pass (fixing issues as they're found), proceed directly to Step 
 | `/review-architect` | Run architect review (designed for `/loop`) | **Exists** |
 | `/review-customer` | Run customer-perspective review (designed for `/loop`) | **Exists** |
 | `/review-a11y` | Run accessibility audit (designed for `/loop`) | **Exists** |
+| `/review-browser` | Run browser QA against the running local dev server (phase-gated; do NOT use with `/loop`) | **Exists** |
+| `/generate-media-prompts` | Reconcile `[NEEDS:image …]` markers with `IMAGE_REQUESTS.md`; verify convergence | **Exists** |
+| `/add-dos-and-donts` | Append a new rule to `.claude-plugin/GUIDELINES.md` | **Exists** |
 
 ---
 
@@ -712,6 +728,8 @@ What each component protects against — all components are now built:
 | Performance Budget skill | Slow site, poor Core Web Vitals | Step 6 + Step 10 |
 | Analytics & Tracking skill | No measurement of site effectiveness | Step 6 + Step 10 |
 | Legal Compliance skill | GDPR implementation gaps | Step 6 Phase 3 |
+| `IMAGE_REQUESTS.md` manifest + `media-prompting` skill + orphan-marker block in Phase 3 compliance log | Generic AI-generated imagery, missing prompts for images the site needs, dual-source-of-truth drift between code markers and prompt text | Step 6 |
+| `browser-qa` agent + `/review-browser` (phase-gated) | Rendered failures invisible to source review — font fallback rendering, accent-as-field, text wrap collisions, form that renders but does nothing, visual gaps where imagery would prove a claim | Step 7 (phase boundaries + final review) |
 
 ---
 
@@ -737,6 +755,8 @@ Terminal 1 (main):          Terminal 2:              Terminal 3:              Te
 
 Review agents are **read-only by design** — they identify issues but don't modify code. The orchestrator or web-designer applies fixes. This prevents conflicting edits.
 
+**`browser-qa` runs in a separate invocation model** — phase-gated, not `/loop`-based. The orchestrator (or user) invokes `/review-browser` at stable artifact boundaries: after Phase 0, after each completed Phase 1 core page, at each phase end, and as part of the final review pass. It requires a running local dev server (`npm run dev` on `localhost:3000`). Time-based triggers would catch HMR churn and half-built UI — the phase-gated model attaches review to committed work, not wall-clock ticks.
+
 ---
 
 ## File System Map
@@ -757,17 +777,22 @@ project-root/
 │   ├── publish.md                     ← Build + commit + push
 │   ├── review-architect.md            ← Architect review (for /loop)
 │   ├── review-customer.md             ← Customer review (for /loop)
-│   └── review-a11y.md                 ← A11y review (for /loop)
+│   ├── review-a11y.md                 ← A11y review (for /loop)
+│   ├── review-browser.md              ← Browser QA (phase-gated, NOT /loop)
+│   ├── generate-media-prompts.md      ← Reconcile image markers ↔ manifest
+│   └── add-dos-and-donts.md           ← Append to GUIDELINES.md
 │
 ├── .claude-plugin/
 │   ├── plugin.json
+│   ├── GUIDELINES.md                 ← Sparse global dos/don'ts; read by web-designer + architect
 │   ├── agents/
 │   │   ├── architect.md
 │   │   ├── customer-perspective.md
 │   │   ├── site-planner.md
 │   │   ├── web-designer.md
 │   │   ├── content-strategist.md
-│   │   └── accessibility-auditor.md
+│   │   ├── accessibility-auditor.md
+│   │   └── browser-qa.md
 │   │
 │   └── skills/
 │       ├── company-brand/
@@ -800,17 +825,27 @@ project-root/
 │       │   └── SKILL.md
 │       ├── analytics-tracking/
 │       │   └── SKILL.md
-│       └── legal-compliance/
-│           └── SKILL.md
+│       ├── legal-compliance/
+│       │   └── SKILL.md
+│       └── media-prompting/
+│           └── SKILL.md               ← Image-generation prompt patterns
 │
 ├── public/images/
-│   ├── IMAGE_CATALOG.md               ← Written by Step 1
+│   ├── IMAGE_CATALOG.md               ← Written by Step 1 (reusable existing images)
+│   ├── IMAGE_REQUESTS.md              ← Authoritative image-request manifest (written by web-designer during Step 6)
 │   ├── brand/
 │   ├── team/
 │   ├── facility/
 │   ├── services/
 │   ├── cases/
 │   └── hero/
+│
+├── .redesign-state/
+│   ├── decisions.md
+│   ├── review-findings.md
+│   ├── compliance-log.md
+│   ├── url-inventory.md
+│   └── screenshots/                   ← browser-qa output (gitignored)
 │
 ├── src/app/[locale]/                  ← Built pages
 ├── src/components/                    ← Shared components
