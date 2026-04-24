@@ -10,29 +10,40 @@ Brief the user on what you're doing at each major step transition, but do not wa
 
 **Prerequisite:** The `/frontend-design` skill from Anthropic's agent-skills marketplace must be installed. Step 5.2 verifies this and halts if absent. Do not paper over a missing dependency — the pipeline's distinctiveness stack has no UI executor without it.
 
-Start by running the resumption check to figure out where you are, then execute from the first incomplete step.
+Start by running the resumption check to figure out where you are, then execute from the first incomplete step. **Completeness is content-based, not existence-based** — a file existing is not enough; every "step done" decision checks that the file has real content AND (where applicable) that its recorded input hashes still match current inputs.
 
 ---
 
 ## Resumption Check (run this FIRST)
 
-Read these files and determine the current state:
+Read these files and determine the current state. Apply the **completeness rules** next to each item — a file existing is not enough.
 
-1. Read `.claude-plugin/skills/company-brand/SKILL.md` — real company data, or "Not Yet Populated" stub?
-2. Check if `public/images/IMAGE_CATALOG.md` exists — images extracted?
-3. Check if `.redesign-state/url-inventory.md` has a real inventory — crawl complete?
-4. Check if `content-strategy.md` exists — content strategy done?
-5. Read `SITE_PLAN_TEMPLATE.md` — concrete pages with keywords, or still generic?
-6. Check if `redirects.md` exists — redirects mapped?
-7. Check if `design-direction.md` exists at the project root — Step 5.1 done?
-8. Read `.claude-plugin/skills/design-system/SKILL.md` — populated with real tokens (Step 5.2 done), or still stub?
-9. List `src/app/[locale]/` (escape the brackets in shell commands — `src/app/\[locale\]/` in zsh) — which page directories exist?
-10. Read `.redesign-state/review-findings.md` — any unhandled review findings to drain before continuing?
-11. Read `.redesign-state/compliance-log.md` — is the most recently built page blocked on an unjustified FAIL?
-12. Search for `[NEEDS:]` markers: `grep -rn "NEEDS:" src/ messages/`
-13. Check if `IMAGE_SLOTS.md` exists at project root. If `design-direction.md` exists but `IMAGE_SLOTS.md` does not, the project predates the slot-inventory artifact — derive it as a migration step BEFORE executing any remaining steps. Process: read `design-direction.md` (the committed P-strategy + attribute→visual translation table + any explicit imagery clauses), read `SITE_PLAN_TEMPLATE.md` (routes + sections), cross-reference the `page-design` references, enumerate every required slot per the schema in `IMAGE_SLOTS.md`'s header, set each to `Resolution: pending`. Log an entry to `.redesign-state/decisions.md` noting the migration. This is a one-time backfill — future runs skip this step since the file now exists.
+1. **Brand.** Read `.claude-plugin/skills/company-brand/SKILL.md`. Done = has real company data (not "Not Yet Populated" stub).
+2. **Catalog.** `public/images/IMAGE_CATALOG.md` exists and has a non-empty body.
+3. **URL inventory.** `.redesign-state/url-inventory.md` has URLs, not just the header.
+4. **Content strategy.** `content-strategy.md` exists with real messaging content.
+5. **Site plan.** `SITE_PLAN_TEMPLATE.md` has concrete pages (placeholder template body = not done).
+6. **Redirects.** `redirects.md` exists.
+7. **Design direction.** `design-direction.md` exists at project root AND has filled the seven strategy categories (not the template stub).
+8. **Design system tokenized.** `.claude-plugin/skills/design-system/SKILL.md` populated with real tokens.
+9. **Image slots derived.** `IMAGE_SLOTS.md` has a complete derivation metadata block (HTML comment at top with `derived-at`, `plugin-version`, and non-empty `design-direction-hash` + `site-plan-hash`). Re-compute current `sha256sum design-direction.md | cut -c1-12` and `sha256sum SITE_PLAN_TEMPLATE.md | cut -c1-12` — if either differs from the recorded input hash, the inventory is stale. Missing metadata OR stale hashes = **derive now** (the one-time migration OR a brief-edit re-derivation). Write the new hashes + current plugin version from `.claude-plugin/plugin.json` into the metadata block after derivation. Log the derivation to `.redesign-state/decisions.md`.
+10. **Built pages.** List `src/app/[locale]/` (escape the brackets — `src/app/\[locale\]/` in zsh). Which page directories exist? For each built page, read the latest compliance-log entry. Any unjustified FAIL = that page is not done.
+11. **Review findings.** Read `.redesign-state/review-findings.md`:
+    - **Run-log staleness.** For each reviewer lane (`architect`, `customer`, `a11y`, `browser-qa`), find the most recent `Run log` line. If any lane's last-run `plugin=<version>` is older than the current plugin version (`.claude-plugin/plugin.json` `"version"`), OR the lane has no run-log entry at all, that lane is **stale** — Step 7 must re-enter for that lane before Step 11.
+    - **Pending/deferred blockers.** Any finding with `status: pending` AND `blocking: yes`, or `status: deferred` AND `blocking: yes`, or `status: deferred` AND `publish-allowed: no` or missing, or `status: rejected` AND `blocking: yes` without a substantive `reason` — Step 7 drain must handle before Step 11.
+12. **Compliance log.** `.redesign-state/compliance-log.md` — is the most recently built page blocked on an unjustified FAIL?
+13. **Placeholders.** `grep -rn "NEEDS:" src/ messages/` — count remaining.
 
-Then report: "Steps 1-N are done. Starting from step N+1." Append a one-line entry to `.redesign-state/decisions.md` recording what you resumed from and why, then proceed immediately.
+Report: "Steps 1-N are done. Stale lanes: <list>. Blocking findings: <count>. Starting from step <X>."
+
+**Hard rule on "Starting from step X":**
+
+- If any of items 1–9 is not done, jump to that step and execute.
+- If 1–9 are done but built pages exist with unresolved issues, re-enter Step 6 rework cycle.
+- If the site is built-through-Step-6 and has stale review lanes OR pending blocking findings, **re-enter Step 7** — do NOT jump to Step 10 or Step 11.
+- Step 10 is **mandatory** before Step 11. Never skip it on resumption, regardless of whether a prior Step 10 pass exists. This is what closes the class of failures where new audits were added to the kit but an old project's Step 10 pass was considered valid. The Step 10 block writes `.redesign-state/publish-gate.md` which `/publish` reads as its gate.
+
+Append a one-line entry to `.redesign-state/decisions.md` recording what you resumed from and why, then proceed immediately.
 
 ---
 
@@ -262,14 +273,60 @@ Verify every item systematically. Read these skill files for reference:
 
 Fix issues as you find them.
 
+**After the checklist is worked through, write the publish gate.** The publish gate is a single file `.redesign-state/publish-gate.md` that encodes whether the project is safe to ship. `/publish` refuses to run if the gate is missing, stale, or FAIL. Write this EVERY time Step 10 runs — even if you resumed mid-flight, this file must be fresh at the end of Step 10. Evaluate these checks and write PASS or FAIL for each:
+
+1. **Build green** — `npm run build` succeeds.
+2. **Review lanes fresh** — every lane (`architect`, `customer`, `a11y`, `browser-qa`) has a run-log entry in `.redesign-state/review-findings.md` with `plugin=<current version>` (read current from `.claude-plugin/plugin.json`). No lane is stale. If `browser-qa` is stale because the dev server isn't running, flag the lane as `skipped-with-reason: dev-server-not-running` — that counts as a yellow-flag in the gate but does not block by itself.
+3. **No pending blockers** — no finding in `review-findings.md` has `status: pending` AND `blocking: yes`.
+4. **No deferred blockers** — no finding has `status: deferred` AND `blocking: yes`. A blocking finding cannot be deferred-to-publish.
+5. **Deferrals are publish-allowed** — every `status: deferred` finding has `publish-allowed: yes` AND a `reason:` field filled with substantive content. Any missing or empty `publish-allowed` on a deferred finding = FAIL.
+6. **Rejected criticals are evidence-backed** — every `status: rejected` + `blocking: yes` finding has a substantive `reason:` citing concrete evidence (brief quote, spec reference, live verification). Vague reasons = FAIL.
+7. **Image slots resolved** — every slot in `IMAGE_SLOTS.md` has a terminal Resolution (`catalog-reuse`, `manifest-row`, `image-present`, or `justified-none`). Any `pending` = FAIL.
+8. **IMAGE_SLOTS.md fresh** — recorded `design-direction-hash` and `site-plan-hash` match the current hashes. Stale = FAIL.
+9. **Production readiness checklist items 1–15 above** — all PASS.
+
+Write the gate file in this exact shape so `/publish` can parse it:
+
+```markdown
+# Publish Gate
+
+**Computed at:** <ISO timestamp>
+**Commit:** <git rev-parse --short HEAD>
+**Plugin version:** <value from plugin.json>
+**Overall:** PASS | FAIL
+
+## Checks
+| # | Check | Result | Notes |
+|---|-------|--------|-------|
+| 1 | Build green | PASS \| FAIL | <reason if FAIL> |
+| 2 | Review lanes fresh | PASS \| YELLOW \| FAIL | <list of stale lanes> |
+| 3 | No pending blockers | PASS \| FAIL | <count, finding IDs> |
+| 4 | No deferred blockers | PASS \| FAIL | <finding IDs> |
+| 5 | Deferrals publish-allowed | PASS \| FAIL | <bad deferrals> |
+| 6 | Rejected criticals evidence-backed | PASS \| FAIL | <bad rejections> |
+| 7 | Image slots resolved | PASS \| FAIL | <unresolved slot IDs> |
+| 8 | IMAGE_SLOTS.md fresh | PASS \| FAIL | <stale input> |
+| 9 | Production readiness | PASS \| FAIL | <which items failed> |
+
+## Blockers to resolve before publish
+
+*(List of specific next actions the user or web-designer must take — one per line. Empty if Overall is PASS.)*
+```
+
+`Overall: PASS` requires every check PASS (YELLOW on check 2 does NOT block). Any FAIL on checks 1, 3–9 = `Overall: FAIL`.
+
 ---
 
 ## Step 11 — Publish
 
-1. Run `npm run build` to verify compilation one final time
-2. Use `/publish` to commit and push
+**Never skip Step 10.** If you arrived here via resumption and Step 10's gate file is missing or older than HEAD / `IMAGE_SLOTS.md` / `review-findings.md`, go back and re-run Step 10 first.
+
+1. Verify `.redesign-state/publish-gate.md` exists and is fresh (newer than the most recent commit on the current branch). If missing or stale, re-run Step 10.
+2. If `Overall: FAIL`, stop. Report the blockers section to the user. Do NOT invoke `/publish`.
+3. If `Overall: PASS`, invoke `/publish`. The publish command will re-read the gate as a second layer of protection.
 
 Report to the user:
 - What was built (page count, component count)
 - Remaining `[NEEDS:]` placeholders that require client input
-- The site will be live within 1-2 minutes
+- The gate verdict and what it checked
+- The site will be live within 1-2 minutes (on PASS) OR the exact blockers to resolve (on FAIL)

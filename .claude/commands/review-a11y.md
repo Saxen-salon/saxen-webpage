@@ -58,7 +58,15 @@ If nothing has changed since the last review, report "No new changes to review" 
 
    `[AUTO-FIX]` findings are handled inline and do NOT go to the queue.
 
-6. **Summarize findings** to terminal:
+6. **Append a run-log entry.** Before returning, read the current plugin version from `.claude-plugin/plugin.json`. Append ONE line to the `## Run log` section of `.redesign-state/review-findings.md`:
+
+   ```
+   YYYY-MM-DDThh:mm — reviewer=a11y — plugin=<version> — scope=<files reviewed> — verdict=<N critical, M warning, K note, +auto-fixed count>
+   ```
+
+   The `/redesign` resumption check uses this to detect stale lanes. Append, don't replace.
+
+7. **Summarize findings** to terminal:
    - Which files were reviewed
    - Accessibility score across key dimensions
    - **Auto-fixed inline:** [count, one-line list]

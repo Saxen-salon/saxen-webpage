@@ -26,7 +26,15 @@ If nothing has changed since the last review, report "No new changes to review" 
    - Blocking: `yes` for deal-breakers affecting core conversion pages (homepage, services, contact); `no` otherwise
    - Where, what (buyer reaction in one line), why (which persona reacted and why), suggested fix, status `pending`
 
-5. **Summarize findings** to terminal:
+5. **Append a run-log entry.** Before returning, read the current plugin version from `.claude-plugin/plugin.json`. Append ONE line to the `## Run log` section of `.redesign-state/review-findings.md`:
+
+   ```
+   YYYY-MM-DDThh:mm — reviewer=customer — plugin=<version> — scope=<pages reviewed> — verdict=<N critical, M warning, K note>
+   ```
+
+   The `/redesign` resumption check uses this to detect stale lanes. Append, don't replace.
+
+6. **Summarize findings** to terminal:
    - Which page was reviewed
    - Quick verdict (would a buyer get in touch?)
    - Top 3 priority fixes (for the web-designer)

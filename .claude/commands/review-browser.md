@@ -72,7 +72,15 @@ Run a browser QA cycle using Chrome MCP against the running dev server. This com
    YYYY-MM-DDThh:mm — browser-qa run — commit <sha> — scope: <route-count> routes × <viewport-count> viewports × <locale-count> locales — findings: <N critical> / <N warning> / <N note> / <N incomplete>
    ```
 
-8. **Summarize to terminal.** Use the Output Format block from `.claude-plugin/agents/browser-qa.md` verbatim. Keep it concise — full detail lives in the findings file.
+8. **Append a run-log entry to review-findings.md.** Read the current plugin version from `.claude-plugin/plugin.json`. Append ONE line to the `## Run log` section of `.redesign-state/review-findings.md`:
+
+   ```
+   YYYY-MM-DDThh:mm — reviewer=browser-qa — plugin=<version> — scope=<route slugs covered> — verdict=<N critical, M warning, K note, L incomplete>
+   ```
+
+   The `/redesign` resumption check uses this to detect stale lanes. If the dev server wasn't running and browser-qa aborted, write the line with `scope=skipped` and `verdict=dev-server-not-running` — the orchestrator interprets this as YELLOW on the gate but not fully stale.
+
+9. **Summarize to terminal.** Use the Output Format block from `.claude-plugin/agents/browser-qa.md` verbatim. Keep it concise — full detail lives in the findings file.
 
 ## What to do if the run is incomplete
 

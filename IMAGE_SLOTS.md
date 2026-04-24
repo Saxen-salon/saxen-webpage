@@ -1,6 +1,22 @@
 # Image Slots
 
+<!-- DERIVATION METADATA — do not edit by hand; the /redesign orchestrator maintains this block -->
+<!--
+derived-at: <ISO timestamp or "not yet derived">
+plugin-version: <value from .claude-plugin/plugin.json when derived>
+schema-version: 1
+inputs:
+  design-direction-hash: <first 12 chars of sha256 of design-direction.md at derivation time>
+  site-plan-hash:        <first 12 chars of sha256 of SITE_PLAN_TEMPLATE.md at derivation time>
+-->
+
 Authoritative inventory of every image slot the committed design direction requires, enumerated per route. **This is the brief-derived binding list** — it exists so missing imagery can't hide in the gap between "web-designer forgot a marker" and "no one noticed." Every row here must resolve to a concrete state before a page can pass its Phase 3 compliance check.
+
+## Freshness — resumption check contract
+
+On any `/redesign` resumption, the orchestrator re-computes the current hashes of `design-direction.md` and `SITE_PLAN_TEMPLATE.md` and compares them against the HTML-comment `inputs:` block above. If any differ, or the block is missing, or `derived-at: not yet derived` / empty, **this file is stale** and must be re-derived before Step 6 can proceed. An existing file that is empty of slots or was populated without a derivation record does NOT count as complete — the empty template we ship with has `not yet derived` in the metadata on purpose, so existence alone is insufficient.
+
+Hash computation: `sha256sum <path> | cut -c1-12` — short hashes are stable enough for human inspection and change detection. The plugin version comes from `.claude-plugin/plugin.json` `"version"` field.
 
 ## Who writes this
 
@@ -67,4 +83,4 @@ When the orchestrator derives this file at end of Step 5.2 (or on resumption if 
 
 ## Slots
 
-*(Populated by the `/redesign` orchestrator after Step 5.2 completes, or manually derived from `design-direction.md` + `SITE_PLAN_TEMPLATE.md` if bootstrapping a project that predates this artifact. Until populated, this section is empty and the file is not enforcing.)*
+*(Populated by the `/redesign` orchestrator after Step 5.2 completes, or manually derived from `design-direction.md` + `SITE_PLAN_TEMPLATE.md` if bootstrapping a project that predates this artifact. Until populated AND the derivation metadata is filled, this section is empty and the file is not enforcing — the resumption-check's hash gate catches this condition.)*

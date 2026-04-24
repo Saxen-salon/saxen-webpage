@@ -44,11 +44,20 @@ If nothing has changed since the last review, report "No new changes to review" 
 
    The orchestrator drains this file between build phases.
 
-5. **Summarize findings.** Output a brief summary to terminal:
+5. **Append a run-log entry.** Before returning, read the current plugin version from `.claude-plugin/plugin.json` (the `"version"` field). Append ONE line to the `## Run log` section of `.redesign-state/review-findings.md`:
+
+   ```
+   YYYY-MM-DDThh:mm — reviewer=architect — plugin=<version> — scope=<all|changed-files> — verdict=<N critical, M warning, K note>
+   ```
+
+   This is what the `/redesign` resumption check uses to detect whether this lane is stale on a later run. Omitting it means the lane is considered never-run and will be re-invoked. Append, don't replace — the run log is append-only and preserves history.
+
+6. **Summarize findings.** Output a brief summary to terminal:
    - Current build phase and progress
    - Consistency score (1-5 across: distinctiveness, consistency, plan adherence, technical quality, architectural cross-cutting, multilingual, architectural production readiness). Do NOT rate a11y — that's not in scope.
    - **Blocking:** any distinctiveness finding tagged Critical, OR distinctiveness score < 4. Flag the build to pause for rework.
    - **Needs designer:** critical + warning issues that should be addressed before the next page is built.
    - Count of entries appended to `.redesign-state/review-findings.md`.
+   - Run-log line written (confirms stale-lane detection will see this pass).
 
 Keep the summary concise — this runs on a loop and shouldn't produce a wall of text each cycle.

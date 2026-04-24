@@ -738,6 +738,7 @@ What each component protects against — all components are now built:
 | Legal Compliance skill | GDPR implementation gaps | Step 6 Phase 3 |
 | `IMAGE_REQUESTS.md` manifest + `media-prompting` skill + orphan-marker block in Phase 3 compliance log | Generic AI-generated imagery, missing prompts for images the site needs, dual-source-of-truth drift between code markers and prompt text | Step 6 |
 | **`IMAGE_SLOTS.md` brief-derived inventory + architect absence audit (Dim 1.5) + web-designer slot-coverage Phase 3 row** | **Brief-mandated imagery missing with no marker and no manifest row** — the saxen failure mode: when a designer forgets to write both, no downstream check catches it, since every audit today is marker-driven. Slot inventory makes absence visible. | **Step 5.2 (derive) + Step 6 (resolve) + Step 7 (audit)** |
+| **Publish gate (`publish-gate.md`) + content-based resumption check + review-findings run log + mandatory Step 10** | **Pipeline integrity bypass on resumption** — "file exists" was treated as "step done," so the orchestrator shipped a site with an unresolved deferred blocking finding. Gate is a single verdict artifact every relevant step writes to; resumption uses content hashes and plugin-version freshness; `/publish` refuses unless the gate is green. | **Step 0 (content-based resumption), Step 10 (writes gate), Step 11 (reads gate), `/publish` (reads gate)** |
 | `browser-qa` agent + `/review-browser` (phase-gated) | Rendered failures invisible to source review — font fallback rendering, accent-as-field, text wrap collisions, form that renders but does nothing, visual gaps where imagery would prove a claim | Step 7 (phase boundaries + final review) |
 
 ---
@@ -852,9 +853,10 @@ project-root/
 │
 ├── .redesign-state/
 │   ├── decisions.md
-│   ├── review-findings.md
+│   ├── review-findings.md             ← Run log + findings (written by reviewers, read by gate)
 │   ├── compliance-log.md
 │   ├── url-inventory.md
+│   ├── publish-gate.md                ← Single pipeline integrity verdict (Step 10 writes, /publish reads)
 │   └── screenshots/                   ← browser-qa output (gitignored)
 │
 ├── src/app/[locale]/                  ← Built pages

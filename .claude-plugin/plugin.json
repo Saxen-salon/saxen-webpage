@@ -1,6 +1,6 @@
 {
   "name": "website-redesign",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AI-powered web design agents and skills for corporate website redesigns. Requires the 'frontend-design' skill from Anthropic's agent-skills marketplace — without it, Step 6 (page building) has no UI executor and the pipeline will fail loudly.",
   "author": {
     "name": "Website Redesign Kit"
